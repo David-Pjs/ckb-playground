@@ -45,7 +45,7 @@ ckb-playground/
 
 | # | Milestone | Status |
 |---|-----------|--------|
-| 5 | Transfer CKB | Upcoming |
+| 5 | Transfer CKB | In Progress |
 | 6 | Store Data on Cell | Upcoming |
 | 7 | Create Fungible Token (xUDT) | Upcoming |
 | 8 | Create DOB (Digital Object / Spore) | Upcoming |
@@ -82,7 +82,7 @@ ckb-playground/
 |------|-------|--------|--------|
 | 1 | Environment setup, core CKB concepts | [Week 1](weekly-reports/week-01.md) | Complete |
 | 2 | Scripts deep dive, CKB-VM, Cell model mastery | [Week 2](weekly-reports/week-02.md) | Complete |
-| 3 | Transfer CKB, Store Data on Cell | [Week 3](weekly-reports/week-03.md) | Upcoming |
+| 3 | Transfer CKB, Store Data on Cell | [Week 3](weekly-reports/week-03.md) | In Progress |
 | 4 | Fungible Token, Digital Objects | [Week 4](weekly-reports/week-04.md) | Upcoming |
 | 5 | Lock Scripts, CCC exploration | [Week 5](weekly-reports/week-05.md) | Upcoming |
 | 6 | CCC deep dive, application design | [Week 6](weekly-reports/week-06.md) | Upcoming |
