@@ -1,4 +1,4 @@
-# Week 3 - Transfer CKB Tutorial
+# Week 3 - Transfer CKB & Store Data on Cell
 
 **Name:** David
 **Week Ending:** 2026-02-04
@@ -11,6 +11,9 @@
 - [x] Cloned and studied the [simple-transfer example](https://github.com/nervosnetwork/docs.nervos.org/tree/develop/examples/dApp/simple-transfer)
 - [x] Reviewed CCC SDK docs for `SignerCkbPrivateKey`, `Transaction.from`, and `fixedPointFrom`
 - [x] Tested the dApp on Codespaces using OffCKB devnet
+- [x] Read the [Store Data on Cell](https://docs.nervos.org/docs/dapp/store-data-on-cell) tutorial end-to-end
+- [x] Cloned and studied the [store-data-on-cell example](https://github.com/nervosnetwork/docs.nervos.org/tree/develop/examples/dApp/store-data-on-cell)
+- [ ] Test storing and reading messages on testnet
 
 ## Key Learnings
 
@@ -70,15 +73,44 @@ App runs at `http://localhost:1234`. Use the forwarded port in Codespaces to acc
 
 [Screenshots stored in /screenshots/week-03/]
 
+### Store Data on Cell - How It Works
+
+The second tutorial builds directly on the first. A Cell isn't just for holding CKB - it has a **data field** that can store anything. The tutorial writes "Hello CKB!" into a Cell and reads it back.
+
+The key insight: you need to **encode** text into hex format before storing it (computers don't store plain English on-chain). The `utf8ToHex` function converts "Hello CKB!" into `0x48656c6c6f20434b4221`, and `hexToUtf8` converts it back.
+
+The transaction structure is almost identical to the transfer tutorial, with two differences:
+- The output Cell is locked to **your own** address (you're not sending to someone else)
+- The `outputsData` array contains your **hex-encoded message** instead of being empty
+
+To read the message later, you use an **OutPoint** (txHash + output index) to locate the exact Cell, then decode its data field back to text.
+
+One important detail: storing data costs more CKB. Each byte of data = 1 CKB of capacity. So a Cell holding a 28-byte message needs roughly 61 + 28 = 89 CKB minimum (61 for the Lock Script overhead, 28 for the data).
+
+## Practical Progress (Store Data)
+
+- Cloned the store-data-on-cell project into `projects/store-data-on-cell/`
+- Reviewed `lib.ts` - understood `utf8ToHex`, `hexToUtf8`, `buildMessageTx`, and `readOnChainMessage`
+- Still need to run the app and test storing/reading a message on testnet
+
+### How to Run (Codespaces)
+
+```bash
+cd projects/store-data-on-cell
+npm install
+NETWORK=testnet npm start
+```
+
 ## Blockers / Questions
 
-- No major blockers this week - the tutorial worked as documented
-- The 10-second `wait()` for transaction confirmation is a bit hacky. The tutorial mentions using `get_transaction` RPC for proper confirmation polling - want to explore that
+- No major blockers this week - both tutorials worked
+- The 10-second `wait()` for transaction confirmation in the transfer app is a bit hacky. The tutorial mentions using `get_transaction` RPC for proper confirmation polling - want to explore that
 - Curious how `completeInputsByCapacity` selects which Cells to consume when an account has many Cells (UTXO selection strategy)
+- Wondering what happens when a Cell holding data gets consumed - the data is preserved in transaction history but the Cell becomes "dead"
 
 ## Plan for Next Week
 
-- Complete the **Store Data on Cell** tutorial
-- Start exploring how Type Scripts work in practice (for the token tutorials)
+- Complete the **Create Fungible Token (xUDT)** tutorial
+- Complete the **Create DOB** tutorial
+- Start exploring how Type Scripts work in practice
 - Take screenshots of all completed exercises
-- Continue reading CCC SDK source code to understand the transaction building helpers better
