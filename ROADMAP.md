@@ -1,5 +1,27 @@
 # 12-Week CKB Builder Track Roadmap
 
+## Progress Tracker
+
+| # | Week | Milestone | Status |
+|---|------|-----------|--------|
+| 1 | Week 1 | Environment & Core Concepts | Done |
+| 2 | Week 2 | Theory Deep Dive | Done |
+| 3 | Week 3 | Transfer CKB | Done |
+| 4 | Week 3 | Store Data on Cell | Done |
+| 5 | Week 4 | Create Fungible Token | In Progress |
+| 6 | Week 4 | Create DOB (digital object) | In Progress |
+| 7 | Week 5 | Build a Simple Lock | Not Started |
+| 8 | Week 5 | CCC Exploration | Not Started |
+| 9 | Week 6 | CCC Deep Dive & App Design | Not Started |
+| 10 | Week 7 | Application Development (Part 1) | Not Started |
+| 11 | Week 8 | Application Development (Part 2) | Not Started |
+| 12 | Week 9 | Nervos DAO | Not Started |
+| 13 | Week 10 | Spore Protocol / DOBs | Not Started |
+| 14 | Week 11 | Advanced Topics | Not Started |
+| 15 | Week 12 | Final Polish & Presentation | Not Started |
+
+---
+
 ## Phase 1: Foundation (Weeks 1-2)
 
 ### Week 1 - Environment & Core Concepts
