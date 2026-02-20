@@ -46,7 +46,7 @@ ckb-playground/
 | # | Milestone | Status |
 |---|-----------|--------|
 | 5 | Transfer CKB | In Progress |
-| 6 | Store Data on Cell | Upcoming |
+| 6 | Store Data on Cell | In Progress |
 | 7 | Create Fungible Token (xUDT) | Upcoming |
 | 8 | Create DOB (Digital Object / Spore) | Upcoming |
 | 9 | Build a Simple Lock Script | Upcoming |
