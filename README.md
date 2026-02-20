@@ -47,8 +47,8 @@ ckb-playground/
 |---|-----------|--------|
 | 5 | Transfer CKB | Done |
 | 6 | Store Data on Cell | Done |
-| 7 | Create Fungible Token (xUDT) | Upcoming |
-| 8 | Create DOB (Digital Object / Spore) | Upcoming |
+| 7 | Create Fungible Token (xUDT) | Done |
+| 8 | Create DOB (Digital Object / Spore) | In Progress |
 | 9 | Build a Simple Lock Script | Upcoming |
 
 ### Phase 3: Application Development

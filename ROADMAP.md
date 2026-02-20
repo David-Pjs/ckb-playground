@@ -8,7 +8,7 @@
 | 2 | Week 2 | Theory Deep Dive | Done |
 | 3 | Week 3 | Transfer CKB | Done |
 | 4 | Week 3 | Store Data on Cell | Done |
-| 5 | Week 4 | Create Fungible Token | In Progress |
+| 5 | Week 4 | Create Fungible Token | Done |
 | 6 | Week 4 | Create DOB (digital object) | In Progress |
 | 7 | Week 5 | Build a Simple Lock | Not Started |
 | 8 | Week 5 | CCC Exploration | Not Started |
