@@ -9,7 +9,7 @@
 | 3 | Week 3 | Transfer CKB | Done |
 | 4 | Week 3 | Store Data on Cell | Done |
 | 5 | Week 4 | Create Fungible Token | Done |
-| 6 | Week 4 | Create DOB (digital object) | In Progress |
+| 6 | Week 4 | Create DOB (digital object) | Done |
 | 7 | Week 5 | Build a Simple Lock | Not Started |
 | 8 | Week 5 | CCC Exploration | Not Started |
 | 9 | Week 6 | CCC Deep Dive & App Design | Not Started |

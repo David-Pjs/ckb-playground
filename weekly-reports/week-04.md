@@ -11,8 +11,8 @@
 - [x] Cloned and studied the xUDT example
 - [x] Reviewed `lib.ts` - understood `issueToken`, `queryIssuedTokenCells`, `transferTokenToAddress`
 - [x] Tested fungible token creation on testnet
-- [ ] Read the [Create DOB (digital object)](https://docs.nervos.org/docs/dapp/create-dob) tutorial end-to-end
-- [ ] Tested DOB creation on testnet
+- [x] Read the [Create DOB (digital object)](https://docs.nervos.org/docs/dapp/create-dob) tutorial end-to-end
+- [x] Tested DOB creation on testnet
 
 ## Key Learnings
 
@@ -60,6 +60,14 @@ The Cell also needs **capacity** (CKB) to exist on-chain. A basic token cell cos
 - Tx hash: `0x1487f1b4eb85532d936c0482d1c29083e487b91983f6b8b8b53d371861422b9b`
 - Token xUDT args: `0x7de82d61a7eb2ec82b0dc653e558ba120efcbfbb44dac87c12972d05bf25065300000000`
 - Token cell capacity: 146 CKB
+
+### Create DOB (Spore Protocol)
+
+- Cloned create-dob project into `projects/create-dob/`
+- Ran `NETWORK=testnet npm start`
+- Uploaded a 344-byte image and created a Spore DOB on-chain
+- Tx hash: `0x23d972e7ff25d4009984661145a7f1d83b83e86afe9bf7d75096929f41d639fc`
+- Retrieved and displayed the image back from the blockchain using Check Spore Content
 
 ## Screenshots
 
