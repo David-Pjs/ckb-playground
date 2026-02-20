@@ -13,7 +13,7 @@
 - [x] Tested the dApp on Codespaces using OffCKB devnet
 - [x] Read the [Store Data on Cell](https://docs.nervos.org/docs/dapp/store-data-on-cell) tutorial end-to-end
 - [x] Cloned and studied the [store-data-on-cell example](https://github.com/nervosnetwork/docs.nervos.org/tree/develop/examples/dApp/store-data-on-cell)
-- [ ] Test storing and reading messages on testnet
+- [x] Test storing and reading messages on testnet
 
 ## Key Learnings
 
@@ -91,7 +91,10 @@ One important detail: storing data costs more CKB. Each byte of data = 1 CKB of 
 
 - Cloned the store-data-on-cell project into `projects/store-data-on-cell/`
 - Reviewed `lib.ts` - understood `utf8ToHex`, `hexToUtf8`, `buildMessageTx`, and `readOnChainMessage`
-- Still need to run the app and test storing/reading a message on testnet
+- Ran the app on testnet (`NETWORK=testnet npm start`)
+- Wrote message `"hello common knowledge base!"` on-chain
+- Tx hash: `0x91e34dae8e30934ea0cd89a1696bc2ef52db34d5020dd1b70b00b4cbf0c6f82a`
+- Read the message back successfully - confirmed it returned `"hello common knowledge base!"`
 
 ### How to Run (Codespaces)
 
