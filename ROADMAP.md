@@ -12,7 +12,7 @@
 | 6 | Week 4 | Create DOB (digital object) | Done |
 | 7 | Week 5 | Build a Simple Lock | Blocked |
 | 8 | Week 5 | CCC Exploration | Done |
-| 9 | Week 6 | CCC Deep Dive & App Design | Not Started |
+| 9 | Week 6 | CCC Deep Dive & App Design | Done |
 | 10 | Week 7 | Application Development (Part 1) | Not Started |
 | 11 | Week 8 | Application Development (Part 2) | Not Started |
 | 12 | Week 9 | Nervos DAO | Not Started |
