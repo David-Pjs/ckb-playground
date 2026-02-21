@@ -34,7 +34,7 @@ jobs:
 
       - name: Build
         working-directory: projects/ckb-airdrop
-        run: npm run build
+        run: npx parcel build index.html --dist-dir dist --public-url /ckb-playground/
         env:
           NETWORK: testnet
 
