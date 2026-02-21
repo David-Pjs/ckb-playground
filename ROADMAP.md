@@ -10,8 +10,8 @@
 | 4 | Week 3 | Store Data on Cell | Done |
 | 5 | Week 4 | Create Fungible Token | Done |
 | 6 | Week 4 | Create DOB (digital object) | Done |
-| 7 | Week 5 | Build a Simple Lock | Not Started |
-| 8 | Week 5 | CCC Exploration | Not Started |
+| 7 | Week 5 | Build a Simple Lock | Blocked |
+| 8 | Week 5 | CCC Exploration | Done |
 | 9 | Week 6 | CCC Deep Dive & App Design | Not Started |
 | 10 | Week 7 | Application Development (Part 1) | Not Started |
 | 11 | Week 8 | Application Development (Part 2) | Not Started |
