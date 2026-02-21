@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'projects/ckb-airdrop/**'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 permissions:
