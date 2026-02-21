@@ -117,7 +117,9 @@ The token balance refresh after sending has an 8-second `sleep()` before it re-q
 
 ## Screenshots
 
-[Screenshots stored in /screenshots/week-08/]
+![CKB Airdrop - wallet loaded on testnet](/screenshots/week-08/ckb-airdrop-wallet.png)
+
+*Wallet loaded on testnet — default devnet key resolves to a funded address, balance shown in CKB.*
 
 ## Blockers / Questions
 
