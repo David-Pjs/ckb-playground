@@ -7,6 +7,11 @@
     "build": "parcel build index.html --dist-dir dist --public-url ./",
     "lint": "tsc --noEmit"
   },
+  "targets": {
+    "default": {
+      "scopeHoist": false
+    }
+  },
   "keywords": ["ckb", "nervos", "airdrop", "xudt", "token"],
   "license": "MIT",
   "dependencies": {
