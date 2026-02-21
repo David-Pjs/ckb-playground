@@ -49,7 +49,7 @@ ckb-playground/
 | 6 | Store Data on Cell | Done |
 | 7 | Create Fungible Token (xUDT) | Done |
 | 8 | Create DOB (Digital Object / Spore) | Done |
-| 9 | Build a Simple Lock Script | Upcoming |
+| 9 | Build a Simple Lock Script | Blocked |
 
 ### Phase 3: Application Development
 
@@ -84,7 +84,7 @@ ckb-playground/
 | 2 | Scripts deep dive, CKB-VM, Cell model mastery | [Week 2](weekly-reports/week-02.md) | Complete |
 | 3 | Transfer CKB, Store Data on Cell | [Week 3](weekly-reports/week-03.md) | Complete |
 | 4 | Fungible Token, Digital Objects | [Week 4](weekly-reports/week-04.md) | Complete |
-| 5 | Lock Scripts, CCC exploration | [Week 5](weekly-reports/week-05.md) | Upcoming |
+| 5 | Lock Scripts, CCC exploration | [Week 5](weekly-reports/week-05.md) | Complete |
 | 6 | CCC deep dive, application design | [Week 6](weekly-reports/week-06.md) | Upcoming |
 | 7 | Application development (Part 1) | [Week 7](weekly-reports/week-07.md) | Upcoming |
 | 8 | Application development (Part 2) | [Week 8](weekly-reports/week-08.md) | Upcoming |
