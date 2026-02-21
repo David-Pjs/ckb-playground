@@ -57,7 +57,7 @@ ckb-playground/
 |---|-----------|--------|
 | 10 | Learn CCC (Common Chain Connector) - App, Playground, Examples | Done |
 | 11 | Design own application | Done |
-| 12 | Build and deploy application on testnet | Upcoming |
+| 12 | Build and deploy application on testnet | Done |
 
 ### Phase 4: Intermediate
 
@@ -86,8 +86,8 @@ ckb-playground/
 | 4 | Fungible Token, Digital Objects | [Week 4](weekly-reports/week-04.md) | Complete |
 | 5 | Lock Scripts, CCC exploration | [Week 5](weekly-reports/week-05.md) | Complete |
 | 6 | CCC deep dive, application design | [Week 6](weekly-reports/week-06.md) | Complete |
-| 7 | Application development (Part 1) | [Week 7](weekly-reports/week-07.md) | Upcoming |
-| 8 | Application development (Part 2) | [Week 8](weekly-reports/week-08.md) | Upcoming |
+| 7 | Application development (Part 1) | [Week 7](weekly-reports/week-07.md) | Complete |
+| 8 | Application development (Part 2) | [Week 8](weekly-reports/week-08.md) | Complete |
 | 9 | Nervos DAO | [Week 9](weekly-reports/week-09.md) | Upcoming |
 | 10 | Spore Protocol | [Week 10](weekly-reports/week-10.md) | Upcoming |
 | 11 | Advanced topics | [Week 11](weekly-reports/week-11.md) | Upcoming |
