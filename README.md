@@ -70,8 +70,8 @@ ckb-playground/
 
 | # | Milestone | Status |
 |---|-----------|--------|
-| 15 | SSRI (Script-Sourced Rich Information) | Upcoming |
-| 16 | RGB++ Protocol | Upcoming |
+| 15 | RGB++ Protocol | Done |
+| 16 | SSRI (Script-Sourced Rich Information) | Upcoming |
 | 17 | xUDT Standard Deep Dive | Upcoming |
 
 ---
@@ -90,7 +90,7 @@ ckb-playground/
 | 8 | Application development (Part 2) | [Week 8](weekly-reports/week-08.md) | Complete |
 | 9 | Nervos DAO | [Week 9](weekly-reports/week-09.md) | Complete |
 | 10 | Spore Protocol | [Week 10](weekly-reports/week-10.md) | Complete |
-| 11 | Advanced topics | [Week 11](weekly-reports/week-11.md) | Upcoming |
+| 11 | RGB++ Protocol | [Week 11](weekly-reports/week-11.md) | Complete |
 | 12 | Final project polish and retrospective | [Week 12](weekly-reports/week-12.md) | Upcoming |
 
 ---
