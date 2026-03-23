@@ -1,3 +1,3 @@
-const { hd } = require("@ckb-lumos/lumos");
-console.log("hd keys:", Object.keys(hd));
-console.log("hd.key keys:", Object.keys(hd.key || {}));
+const { predefinedSporeConfigs } = require("@spore-sdk/core");
+console.log("configs:", Object.keys(predefinedSporeConfigs));
+console.log(JSON.stringify(predefinedSporeConfigs, null, 2));
