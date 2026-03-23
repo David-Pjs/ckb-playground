@@ -8,8 +8,7 @@ const SPORE_CONFIG = predefinedSporeConfigs.Testnet;
 
 lumosConfig.initializeConfig(lumosConfig.predefined.AGGRON4);
 
-const pubKey = hd.key.privateKeyToPublicKey(PRIVATE_KEY);
-const blake160 = hd.key.publicKeyToBlake160(pubKey);
+const blake160 = hd.key.privateKeyToBlake160(PRIVATE_KEY);
 const SCRIPTS = lumosConfig.predefined.AGGRON4.SCRIPTS;
 const lock = {
   codeHash: SCRIPTS.SECP256K1_BLAKE160.CODE_HASH,
