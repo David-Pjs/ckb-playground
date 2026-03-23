@@ -2,7 +2,8 @@ import { createCluster, createSpore, predefinedSporeConfigs } from "@spore-sdk/c
 import { config as lumosConfig, hd, helpers, RPC } from "@ckb-lumos/lumos";
 import { common } from "@ckb-lumos/common-scripts";
 
-const PRIVATE_KEY = process.env.PKEY as string;
+const PRIVATE_KEY = "0x90413b43bbfc86daeec9370e81e77bab" +
+  "551a01458058916041237710ffa42d95";
 const SPORE_CONFIG = predefinedSporeConfigs.Testnet;
 
 lumosConfig.initializeConfig(lumosConfig.predefined.AGGRON4);
