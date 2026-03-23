@@ -4,7 +4,7 @@ import { common } from "@ckb-lumos/common-scripts";
 
 const PRIVATE_KEY = "0x90413b43bbfc86daeec9370e81e77bab" +
   "551a01458058916041237710ffa42d95";
-const SPORE_CONFIG = predefinedSporeConfigs.Testnet;
+const SPORE_CONFIG = predefinedSporeConfigs.Aggron4;
 
 lumosConfig.initializeConfig(lumosConfig.predefined.AGGRON4);
 
