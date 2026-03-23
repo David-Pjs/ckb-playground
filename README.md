@@ -64,7 +64,7 @@ ckb-playground/
 | # | Milestone | Status |
 |---|-----------|--------|
 | 13 | Nervos DAO - deposit and withdraw | Done |
-| 14 | Spore Protocol / DOBs | Upcoming |
+| 14 | Spore Protocol / DOBs | Done |
 
 ### Phase 5: Advanced
 
@@ -89,7 +89,7 @@ ckb-playground/
 | 7 | Application development (Part 1) | [Week 7](weekly-reports/week-07.md) | Complete |
 | 8 | Application development (Part 2) | [Week 8](weekly-reports/week-08.md) | Complete |
 | 9 | Nervos DAO | [Week 9](weekly-reports/week-09.md) | Complete |
-| 10 | Spore Protocol | [Week 10](weekly-reports/week-10.md) | Upcoming |
+| 10 | Spore Protocol | [Week 10](weekly-reports/week-10.md) | Complete |
 | 11 | Advanced topics | [Week 11](weekly-reports/week-11.md) | Upcoming |
 | 12 | Final project polish and retrospective | [Week 12](weekly-reports/week-12.md) | Upcoming |
 
