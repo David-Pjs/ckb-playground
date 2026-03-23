@@ -1,11 +1,15 @@
 // RGB++ cell query
-// Uses @rgbpp/sdk for correct constants, queries CKB mainnet read-only
+// Uses @rgbpp-sdk/ckb for the correct lock script constants
+// Queries CKB mainnet read-only - no wallet, no spending
 
-import { RGBPP_LOCK_ARGS_BYTES_LEN } from "@rgbpp-sdk/ckb";
 import { getRgbppLockScript } from "@rgbpp-sdk/ckb";
 
 const INDEXER_URL = "https://mainnet.ckb.dev/rpc";
 const IS_MAINNET = true;
+
+// RGB++ lock args format:
+//   VOUT (4 bytes, little-endian) + BTC TXID (32 bytes, little-endian) = 36 bytes
+const RGBPP_ARGS_BYTES = 36;
 
 async function rpc(method: string, params: unknown[]): Promise<any> {
   const res = await fetch(INDEXER_URL, {
@@ -20,12 +24,17 @@ async function rpc(method: string, params: unknown[]): Promise<any> {
 
 function decodeLockArgs(args: string): { txid: string; vout: number } | null {
   const hex = args.replace("0x", "");
-  if (hex.length !== RGBPP_LOCK_ARGS_BYTES_LEN * 2) return null;
-  const txid = (hex.slice(0, 64).match(/../g) as string[]).reverse().join("");
+  if (hex.length !== RGBPP_ARGS_BYTES * 2) return null;
+
+  // First 4 bytes = VOUT (little-endian)
   const vout = parseInt(
-    (hex.slice(64, 72).match(/../g) as string[]).reverse().join(""),
+    (hex.slice(0, 8).match(/../g) as string[]).reverse().join(""),
     16
   );
+
+  // Next 32 bytes = BTC TXID (stored little-endian, display as big-endian)
+  const txid = (hex.slice(8, 72).match(/../g) as string[]).reverse().join("");
+
   return { txid, vout };
 }
 
@@ -33,9 +42,9 @@ async function main() {
   const lock = getRgbppLockScript(IS_MAINNET);
 
   console.log("=== RGB++ Cell Query ===");
-  console.log("Network:   CKB Mainnet (read-only)");
-  console.log("Lock code_hash: " + lock.codeHash);
-  console.log("Lock hash_type: " + lock.hashType);
+  console.log("Network:        CKB Mainnet (read-only)");
+  console.log("RGB++ Lock:     " + lock.codeHash);
+  console.log("Hash type:      " + lock.hashType);
   console.log("");
 
   const result = await rpc("get_cells", [
@@ -59,35 +68,39 @@ async function main() {
     return;
   }
 
-  console.log(`Found ${cells.length} RGB++ cell(s)\n`);
+  console.log(`Found ${cells.length} live RGB++ cell(s) on mainnet\n`);
 
   for (let i = 0; i < cells.length; i++) {
     const cell = cells[i];
     const args: string = cell.output.lock.args;
     const decoded = decodeLockArgs(args);
+    const ckb = (Number(BigInt(cell.output.capacity)) / 1e8).toFixed(4);
 
     console.log(`--- Cell ${i + 1} ---`);
-    console.log(`CKB outpoint:  ${cell.out_point.tx_hash}:${parseInt(cell.out_point.index, 16)}`);
+    console.log(`CKB outpoint:    ${cell.out_point.tx_hash}:${parseInt(cell.out_point.index, 16)}`);
+
     if (decoded) {
-      console.log(`BTC TXID:      ${decoded.txid}`);
-      console.log(`BTC VOUT:      ${decoded.vout}`);
+      console.log(`BTC TXID:        ${decoded.txid}`);
+      console.log(`BTC VOUT:        ${decoded.vout}`);
     } else {
-      console.log(`Lock args:     ${args}`);
+      console.log(`Lock args (raw): ${args}  [non-standard length, likely genesis cell]`);
     }
-    const ckb = Number(BigInt(cell.output.capacity)) / 1e8;
-    console.log(`Capacity:      ${ckb.toFixed(4)} CKB`);
+
+    console.log(`Capacity:        ${ckb} CKB`);
+
     if (cell.output.type) {
-      console.log(`Has type script: yes (${cell.output.type.code_hash.slice(0, 18)}...)`);
+      console.log(`Token type:      ${cell.output.type.code_hash.slice(0, 18)}...`);
     } else {
-      console.log(`Has type script: no`);
+      console.log(`Token type:      none`);
     }
     console.log("");
   }
 
-  console.log("=== What this shows ===");
-  console.log("Each RGB++ cell on CKB is bound to a specific Bitcoin UTXO.");
-  console.log("Lock args = BTC TXID (32 bytes, reversed) + VOUT (4 bytes, LE).");
-  console.log("Spending the CKB cell requires a matching BTC spend in the same tx.");
+  console.log("=== Protocol Summary ===");
+  console.log("Each cell above is isomorphically bound to a Bitcoin UTXO.");
+  console.log("Lock args encode:  VOUT (4B LE) + BTC TXID (32B LE)");
+  console.log("To spend the CKB cell, the matching BTC UTXO must be spent");
+  console.log("in the same RGB++ transaction commitment on Bitcoin.");
 }
 
 main().catch(console.error);
