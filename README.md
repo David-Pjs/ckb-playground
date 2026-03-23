@@ -71,8 +71,8 @@ ckb-playground/
 | # | Milestone | Status |
 |---|-----------|--------|
 | 15 | RGB++ Protocol | Done |
-| 16 | SSRI (Script-Sourced Rich Information) | Upcoming |
-| 17 | xUDT Standard Deep Dive | Upcoming |
+| 16 | SSRI (Script-Sourced Rich Information) | - |
+| 17 | xUDT Standard Deep Dive | - |
 
 ---
 
