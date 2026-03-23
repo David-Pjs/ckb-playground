@@ -91,7 +91,7 @@ ckb-playground/
 | 9 | Nervos DAO | [Week 9](weekly-reports/week-09.md) | Complete |
 | 10 | Spore Protocol | [Week 10](weekly-reports/week-10.md) | Complete |
 | 11 | RGB++ Protocol | [Week 11](weekly-reports/week-11.md) | Complete |
-| 12 | Final project polish and retrospective | [Week 12](weekly-reports/week-12.md) | Upcoming |
+| 12 | Final project polish and retrospective | [Week 12](weekly-reports/week-12.md) | Complete |
 
 ---
 
