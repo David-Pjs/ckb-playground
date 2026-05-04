@@ -1,119 +1,55 @@
-<div align="center">
+# David Uhumagho — Building on CKB
 
-# Nervos CKB Builder Track
-
-**Building on the Common Knowledge Base**
-
-[![Program](https://img.shields.io/badge/Program-Community%20Keeps%20Building-brightgreen)]()
-[![Track](https://img.shields.io/badge/Track-Builders-blue)]()
-[![Duration](https://img.shields.io/badge/Duration-12%20Weeks-orange)]()
-
-</div>
+Building payment infrastructure and applications on Nervos CKB. This repo is where the work lives.
 
 ---
 
-## About This Repository
+## Active Projects
 
-This is my developer log for the **Community Keeps Building (CKB) Builders Track** - a 12-week programme focused on learning smart contract development on the [Nervos CKB](https://www.nervos.org/) blockchain.
+### [Fiber-402](./fiber-402/)
+HTTP 402 payment middleware powered by CKB Fiber micropayments. Pay-per-request infrastructure for AI agents and API services — a real-money toll gate, not a demo.
 
-The repo tracks my progression from foundational concepts through to building real applications on CKB, including weekly progress reports, completed exercise code, screenshots, and project work.
+**Status:** Building — need a live Fiber node connected to replace mock fallback  
+**Stack:** Node.js, x402 protocol, Fiber RPC, CKB
 
-## Repository Structure
+---
+
+## Dev Log
+
+Build updates, blockers, and what's next.
+
+| Date | Entry |
+|------|-------|
+| 2026-04-13 | [Week 3 — Audited codebase, identified the exact blocker](./dev-logs/week-03.md) |
+| 2026-04-06 | [Week 2 — Researched reference architecture (Pocket Network)](./dev-logs/week-02.md) |
+| 2026-03-30 | [Week 1 — First attempt at running a Fiber node](./dev-logs/week-01.md) |
+
+New entries go in [`dev-logs/`](./dev-logs/) using [`TEMPLATE.md`](./dev-logs/TEMPLATE.md).
+
+---
+
+## Screenshots
+
+Project screenshots live in [`screenshots/`](./screenshots/), organised by project folder.
+
+---
+
+## Repo Structure
 
 ```
 ckb-playground/
-  weekly-reports/        Weekly progress reports (markdown)
-  screenshots/           Proof of exercise completion
-  projects/              Tutorial code and application projects
-  ROADMAP.md             Detailed 12-week learning plan
+  fiber-402/          Fiber-402 project code
+  dev-logs/           Weekly build logs
+  screenshots/        Screenshots by project
+  projects/           Earlier CKB work (builders track, 2026)
+  weekly-reports/     CKB builders track reports (archive)
 ```
 
 ---
 
-## Progress
+<details>
+<summary>CKB Builders Track — completed Jan–Mar 2026</summary>
 
-### Phase 1: Foundation
+12-week programme on Nervos CKB. Covered the Cell model, Scripts, CKB-VM, xUDT tokens, Spore Protocol, Nervos DAO, RGB++ Protocol, and shipped a token airdrop app on testnet. Weekly reports in [`weekly-reports/`](./weekly-reports/).
 
-| # | Milestone | Status |
-|---|-----------|--------|
-| 1 | Read "How CKB Works" - Cell Model, Scripts, Transactions, CKB-VM | Done |
-| 2 | Set up dev environment with OffCKB (Codespaces) | Done |
-| 3 | CKB Academy - Basic Theory | Done |
-| 4 | Read "Introduction to Script" - Lock Scripts, Type Scripts | Done |
-
-### Phase 2: Beginner Exercises
-
-| # | Milestone | Status |
-|---|-----------|--------|
-| 5 | Transfer CKB | Done |
-| 6 | Store Data on Cell | Done |
-| 7 | Create Fungible Token (xUDT) | Done |
-| 8 | Create DOB (Digital Object / Spore) | Done |
-| 9 | Build a Simple Lock Script | Blocked |
-
-### Phase 3: Application Development
-
-| # | Milestone | Status |
-|---|-----------|--------|
-| 10 | Learn CCC (Common Chain Connector) - App, Playground, Examples | Done |
-| 11 | Design own application | Done |
-| 12 | Build and deploy application on testnet | Done |
-
-### Phase 4: Intermediate
-
-| # | Milestone | Status |
-|---|-----------|--------|
-| 13 | Nervos DAO - deposit and withdraw | Done |
-| 14 | Spore Protocol / DOBs | Done |
-
-### Phase 5: Advanced
-
-| # | Milestone | Status |
-|---|-----------|--------|
-| 15 | RGB++ Protocol | Done |
-| 16 | SSRI (Script-Sourced Rich Information) | - |
-| 17 | xUDT Standard Deep Dive | - |
-
----
-
-## Weekly Reports
-
-| Week | Focus | Report | Status |
-|------|-------|--------|--------|
-| 1 | Environment setup, core CKB concepts | [Week 1](weekly-reports/week-01.md) | Complete |
-| 2 | Scripts deep dive, CKB-VM, Cell model mastery | [Week 2](weekly-reports/week-02.md) | Complete |
-| 3 | Transfer CKB, Store Data on Cell | [Week 3](weekly-reports/week-03.md) | Complete |
-| 4 | Fungible Token, Digital Objects | [Week 4](weekly-reports/week-04.md) | Complete |
-| 5 | Lock Scripts, CCC exploration | [Week 5](weekly-reports/week-05.md) | Complete |
-| 6 | CCC deep dive, application design | [Week 6](weekly-reports/week-06.md) | Complete |
-| 7 | Application development (Part 1) | [Week 7](weekly-reports/week-07.md) | Complete |
-| 8 | Application development (Part 2) | [Week 8](weekly-reports/week-08.md) | Complete |
-| 9 | Nervos DAO | [Week 9](weekly-reports/week-09.md) | Complete |
-| 10 | Spore Protocol | [Week 10](weekly-reports/week-10.md) | Complete |
-| 11 | RGB++ Protocol | [Week 11](weekly-reports/week-11.md) | Complete |
-| 12 | Final project polish and retrospective | [Week 12](weekly-reports/week-12.md) | Complete |
-
----
-
-## Key Resources
-
-| Resource | Link |
-|----------|------|
-| How CKB Works | [docs.nervos.org](https://docs.nervos.org/docs/getting-started/how-ckb-works) |
-| Quick Start (OffCKB) | [docs.nervos.org](https://docs.nervos.org/docs/getting-started/quick-start) |
-| Introduction to Script | [docs.nervos.org](https://docs.nervos.org/docs/script/intro-to-script) |
-| CKB Academy | [academy.ckb.dev](https://academy.ckb.dev) |
-| CCC Playground | [live.ckbccc.com](https://live.ckbccc.com) |
-| OffCKB CLI | [github.com/ckb-devrel/offckb](https://github.com/ckb-devrel/offckb) |
-| Testnet Faucet | [faucet.nervos.org](https://faucet.nervos.org) |
-| CKB Explorer | [explorer.nervos.org](https://explorer.nervos.org) |
-
----
-
-## Tools & Environment
-
-- **Development:** GitHub Codespaces (Linux)
-- **Local blockchain:** OffCKB (devnet with 20 pre-funded accounts)
-- **SDK:** CCC (Common Chain Connector) for JavaScript/TypeScript
-- **Languages:** JavaScript, TypeScript, Rust (for Script development)
-- **Node:** v20+ LTS
+</details>
