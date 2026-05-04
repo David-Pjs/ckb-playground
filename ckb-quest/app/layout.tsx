@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   description: "5 checkpoints. Real transactions. No shortcuts. Learn CKB and Fiber by building on-chain.",
   openGraph: {
     title: "CKB Quest",
-    description: "Learn CKB and Fiber by doing — real testnet transactions, AI explanations, real CKB rewards.",
+    description: "Learn CKB and Fiber by doing: real testnet transactions, AI explanations, real CKB rewards.",
   },
 };
 

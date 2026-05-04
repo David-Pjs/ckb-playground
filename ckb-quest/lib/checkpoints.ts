@@ -1,4 +1,4 @@
-export interface Step {
+﻿export interface Step {
   text: string;
   windowsNote?: string;
   link?: { label: string; url: string };
@@ -28,7 +28,7 @@ export const CHECKPOINTS: Checkpoint[] = [
     reward: 50,
     concept: `CKB is a blockchain where every piece of state lives in a Cell.
 A Cell is like a box that holds both CKBytes (the native token) and arbitrary data.
-Every cell requires a minimum of 61 CKBytes to exist — that 61 CKB is not a fee,
+Every cell requires a minimum of 61 CKBytes to exist that 61 CKB is not a fee,
 it's the on-chain storage cost of the cell itself. 1 CKByte = 1 byte of on-chain storage.
 
 This is fundamentally different from Ethereum, where you pay gas once and state
@@ -36,7 +36,7 @@ persists forever. On CKB, your cells occupy space, and that space is priced in C
     task: "Connect your JoyID wallet, claim testnet CKB from the faucet, and verify your address has at least 100 CKB.",
     steps: [
       {
-        text: 'Click "Connect Wallet" above and connect with JoyID. No seed phrase needed — it uses your device passkey.',
+        text: 'Click "Connect Wallet" above and connect with JoyID. No seed phrase needed it uses your device passkey.',
       },
       {
         text: "Copy your CKB address (starts with ckt1 for testnet).",
@@ -44,7 +44,7 @@ persists forever. On CKB, your cells occupy space, and that space is priced in C
       {
         text: "Go to the testnet faucet and claim CKB.",
         link: { label: "faucet.nervos.org", url: "https://faucet.nervos.org" },
-        windowsNote: "Open this link in any browser — no special setup needed on Windows.",
+        windowsNote: "Open this link in any browser no special setup needed on Windows.",
       },
       {
         text: "Paste your address in the faucet, click Claim, and wait ~30 seconds for confirmation.",
@@ -62,7 +62,7 @@ persists forever. On CKB, your cells occupy space, and that space is priced in C
     id: 2,
     slug: "send-correctly",
     title: "Send CKB Correctly",
-    subtitle: "Master the change output — the most common beginner mistake",
+    subtitle: "Master the change output the most common beginner mistake",
     reward: 75,
     concept: `On CKB, when you send a transaction, your input Cells are destroyed and
 new output Cells are created. There is no "balance field" that gets updated.
@@ -74,7 +74,7 @@ If you have a Cell with 200 CKB and want to send 100 CKB to Bob, you must:
 
 If you forget the change cell, that CKB is gone. It becomes the transaction fee.
 Most beginners lose CKB this way at least once. The CCC SDK handles this automatically
-with completeInputsByCapacity() — but understanding WHY it exists matters.`,
+with completeInputsByCapacity() but understanding WHY it exists matters.`,
     task: "Send exactly 100 CKB to the quest address below. Your transaction must have a change output back to your address.",
     steps: [
       {
@@ -83,7 +83,7 @@ with completeInputsByCapacity() — but understanding WHY it exists matters.`,
       },
       {
         text: "Send exactly 100 CKB to: ckt1qzda0cr08m85hc8jlnfp3elzk7jkwdf7yw5q4ek (quest address).",
-        windowsNote: "Copy this address exactly — no spaces before or after.",
+        windowsNote: "Copy this address exactly no spaces before or after.",
       },
       {
         text: "Make sure you are connected to testnet (Pudge network).",
@@ -126,7 +126,7 @@ Airdropping 100 tokens to 10 people = ~1,620 CKB minimum just in capacity costs.
         windowsNote: "If OffCKB isn't installed: run 'npm install -g @offckb/cli' in PowerShell as Administrator.",
       },
       {
-        text: "Run 'offckb node' to start the devnet — OR set your environment to testnet.",
+        text: "Run 'offckb node' to start the devnet OR set your environment to testnet.",
         windowsNote: "In PowerShell: $env:NETWORK='testnet' before running your script.",
       },
       {
@@ -151,13 +151,13 @@ Airdropping 100 tokens to 10 people = ~1,620 CKB minimum just in capacity costs.
     title: "Fiber First Contact",
     subtitle: "Run a node. Open a channel. Touch the Lightning.",
     reward: 200,
-    concept: `Fiber is CKB's payment channel network — like Bitcoin's Lightning Network
+    concept: `Fiber is CKB's payment channel network like Bitcoin's Lightning Network
 but supporting multiple assets (CKB, RGB++ tokens, stablecoins) and using PTLCs
 instead of HTLCs for better security.
 
 Here's what payment channels actually are:
   1. You lock CKB into a channel contract on-chain (funding transaction)
-  2. You and your counterparty exchange signed off-chain state updates — instant, no fees
+  2. You and your counterparty exchange signed off-chain state updates instant, no fees
   3. When you're done, one final on-chain transaction settles the final balance
 
 1,000 payments between two parties = 2 on-chain transactions (open + close).
@@ -207,7 +207,7 @@ most developers. This checkpoint walks you through it.`,
     subtitle: "Use your channel to pay the Fiber-402 API",
     reward: 300,
     concept: `HTTP 402 Payment Required is a status code from 1996 that was reserved
-for future use — specifically, for micropayment systems. Fiber makes it finally practical.
+for future use specifically, for micropayment systems. Fiber makes it finally practical.
 
 The flow:
   1. Your client requests a resource (GET /api/data)
@@ -217,7 +217,7 @@ The flow:
   5. Server verifies payment and returns the data
 
 This is pay-per-call API monetization with no subscriptions, no credit cards,
-no accounts — just a wallet and an open Fiber channel. The implications for AI
+no accounts just a wallet and an open Fiber channel. The implications for AI
 agent infrastructure are significant: agents can autonomously pay for data, compute,
 and services without human authorization for each transaction.
 

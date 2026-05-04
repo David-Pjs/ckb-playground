@@ -1,4 +1,4 @@
-import { ccc } from "@ckb-ccc/core";
+﻿import { ccc } from "@ckb-ccc/core";
 
 const TESTNET_RPC = process.env.CKB_TESTNET_RPC ?? "https://testnet.ckb.dev/rpc";
 const SHANNONS_PER_CKB = BigInt(100_000_000);
@@ -8,7 +8,7 @@ function getClient() {
   return new ccc.ClientPublicTestnet({ url: TESTNET_RPC });
 }
 
-// ─── Checkpoint 1: verify address has >= 100 CKB ────────────────────────────
+// Checkpoint 1: verify address has >= 100 CKB
 
 export async function verifyBalance(address: string): Promise<{ ok: boolean; balance: number; error?: string }> {
   try {
@@ -17,7 +17,7 @@ export async function verifyBalance(address: string): Promise<{ ok: boolean; bal
     const balance = await client.getBalance([addr.script]);
     const ckb = Number(balance / SHANNONS_PER_CKB);
     if (ckb < 100) {
-      return { ok: false, balance: ckb, error: `Balance is ${ckb.toFixed(2)} CKB — need at least 100 CKB` };
+      return { ok: false, balance: ckb, error: `Balance is ${ckb.toFixed(2)} CKB. Need at least 100 CKB.` };
     }
     return { ok: true, balance: ckb };
   } catch (e) {
@@ -25,7 +25,7 @@ export async function verifyBalance(address: string): Promise<{ ok: boolean; bal
   }
 }
 
-// ─── Checkpoint 2: verify tx sends 100 CKB to quest address with change ─────
+// Checkpoint 2: verify tx sends 100 CKB to quest address with change
 
 export async function verifyTransfer(txHash: string, senderAddress: string): Promise<{ ok: boolean; error?: string }> {
   try {
@@ -60,7 +60,7 @@ export async function verifyTransfer(txHash: string, senderAddress: string): Pro
     }
 
     if (!sentToQuest) return { ok: false, error: "Transaction does not send ~100 CKB to the quest address" };
-    if (!hasChangeOutput) return { ok: false, error: "No change output found — you sent all your CKB. This is the lesson: always include a change output." };
+    if (!hasChangeOutput) return { ok: false, error: "No change output found. You sent all your CKB. This is the lesson: always include a change output." };
 
     return { ok: true };
   } catch (e) {
@@ -68,7 +68,7 @@ export async function verifyTransfer(txHash: string, senderAddress: string): Pro
   }
 }
 
-// ─── Checkpoint 3: verify xUDT issuance ─────────────────────────────────────
+// Checkpoint 3: verify xUDT issuance
 
 export async function verifyToken(typeScriptHash: string): Promise<{ ok: boolean; error?: string }> {
   try {
@@ -92,7 +92,7 @@ export async function verifyToken(typeScriptHash: string): Promise<{ ok: boolean
     }
 
     if (count === 0) return { ok: false, error: "No cells found with this type script hash on testnet" };
-    if (totalAmount < BigInt(1000)) return { ok: false, error: `Total supply found: ${totalAmount} — need at least 1,000 units` };
+    if (totalAmount < BigInt(1000)) return { ok: false, error: `Total supply found: ${totalAmount}. Need at least 1,000 units.` };
 
     return { ok: true };
   } catch (e) {
@@ -100,12 +100,12 @@ export async function verifyToken(typeScriptHash: string): Promise<{ ok: boolean
   }
 }
 
-// ─── Checkpoint 4: verify Fiber channel ─────────────────────────────────────
+// Checkpoint 4: verify Fiber channel
 
 export async function verifyFiberChannel(channelId: string): Promise<{ ok: boolean; error?: string }> {
   const fiberRpc = process.env.FIBER_NODE_RPC_URL;
   if (!fiberRpc) {
-    return { ok: false, error: "Fiber node not configured on the quest server yet. Check back soon — or DM @david on Nervos Talk." };
+    return { ok: false, error: "Fiber node not configured on the quest server yet. Check back soon or DM @david on Nervos Talk." };
   }
 
   try {
@@ -120,7 +120,7 @@ export async function verifyFiberChannel(channelId: string): Promise<{ ok: boole
 
     const channel = json.result;
     const capacityCKB = Number(BigInt(channel.local_balance ?? "0x0") / SHANNONS_PER_CKB);
-    if (capacityCKB < 100) return { ok: false, error: `Channel capacity is ${capacityCKB} CKB — need at least 100 CKB` };
+    if (capacityCKB < 100) return { ok: false, error: `Channel capacity is ${capacityCKB} CKB. Need at least 100 CKB.` };
 
     return { ok: true };
   } catch (e) {
@@ -128,7 +128,7 @@ export async function verifyFiberChannel(channelId: string): Promise<{ ok: boole
   }
 }
 
-// ─── Checkpoint 5: verify Fiber payment ─────────────────────────────────────
+// Checkpoint 5: verify Fiber payment
 
 export async function verifyFiberPayment(paymentHash: string): Promise<{ ok: boolean; error?: string }> {
   const fiberRpc = process.env.FIBER_NODE_RPC_URL;
@@ -145,7 +145,7 @@ export async function verifyFiberPayment(paymentHash: string): Promise<{ ok: boo
     });
     const json = await res.json();
     if (json.error) return { ok: false, error: `Payment not found: ${json.error.message}` };
-    if (json.result?.status !== "Success") return { ok: false, error: `Payment status: ${json.result?.status ?? "unknown"} — must be Success` };
+    if (json.result?.status !== "Success") return { ok: false, error: `Payment status: ${json.result?.status ?? "unknown"}. Must be Success.` };
 
     return { ok: true };
   } catch (e) {
@@ -153,7 +153,7 @@ export async function verifyFiberPayment(paymentHash: string): Promise<{ ok: boo
   }
 }
 
-// ─── Reward: send CKB from house wallet ──────────────────────────────────────
+// Reward: send CKB from house wallet
 
 export async function sendReward(toAddress: string, amountCKB: number): Promise<{ txHash: string }> {
   const privateKey = process.env.HOUSE_PRIVATE_KEY;

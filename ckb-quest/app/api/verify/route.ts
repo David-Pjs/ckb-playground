@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import {
   verifyBalance,
   verifyTransfer,
@@ -9,7 +9,7 @@ import {
 } from "@/lib/ckb";
 import { CHECKPOINTS } from "@/lib/checkpoints";
 
-// In-memory claim tracker — resets on redeploy (fine for testnet v1)
+// In-memory claim tracker resets on redeploy (fine for testnet v1)
 const claimed = new Map<string, Set<number>>();
 
 function hasClaimed(address: string, checkpointId: number) {
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
       rewardTxHash = txHash;
       markClaimed(address, checkpointId);
     } catch (e) {
-      // Don't fail verification if reward send fails — log and continue
+      // Don't fail verification if reward send fails log and continue
       console.error("Reward send failed:", e);
     }
   }
