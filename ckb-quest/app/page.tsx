@@ -641,7 +641,7 @@ function CheckpointCard({
                       textTransform: "uppercase",
                       marginBottom: "8px",
                     }}>
-                      Claude explains
+                      AI note
                     </div>
                     <p style={{
                       fontFamily: "var(--font-display)",
