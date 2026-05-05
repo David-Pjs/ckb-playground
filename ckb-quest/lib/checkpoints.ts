@@ -33,10 +33,10 @@ it's the on-chain storage cost of the cell itself. 1 CKByte = 1 byte of on-chain
 
 This is fundamentally different from Ethereum, where you pay gas once and state
 persists forever. On CKB, your cells occupy space, and that space is priced in CKBytes.`,
-    task: "Connect your JoyID wallet, claim testnet CKB from the faucet, and verify your address has at least 100 CKB.",
+    task: "Connect your wallet, claim testnet CKB from the faucet, and verify your address has at least 100 CKB.",
     steps: [
       {
-        text: 'Click "Connect Wallet" above and connect with JoyID. No seed phrase needed it uses your device passkey.',
+        text: 'Click "Connect Wallet" above. Use JoyID (passkey, no seed phrase) or MetaMask.',
       },
       {
         text: "Copy your CKB address (starts with ckt1 for testnet).",

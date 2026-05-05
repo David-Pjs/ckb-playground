@@ -161,13 +161,22 @@ export default function QuestPage() {
                   }}>
                     connected
                   </div>
-                  <div style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "11px",
-                    color: "var(--color-muted)",
-                  }}>
-                    {address.slice(0, 12)}…{address.slice(-6)}
-                  </div>
+                  <button
+                    onClick={() => navigator.clipboard.writeText(address)}
+                    title={address}
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "11px",
+                      color: "var(--color-muted)",
+                      background: "none",
+                      border: "none",
+                      padding: 0,
+                      cursor: "pointer",
+                      textAlign: "right",
+                    }}
+                  >
+                    {address.slice(0, 12)}…{address.slice(-6)} ⎘
+                  </button>
                 </div>
               ) : (
                 <button
