@@ -26,6 +26,7 @@ Build updates, blockers, and what's next.
 
 | Date | Entry |
 |------|-------|
+| 2026-05-15 | [Week 5 CKB Quest Phase 2: DAO, Spore, RGB++](./dev-logs/week-05.md) |
 | 2026-05-04 | [Week 4 CKB Quest: learn-to-earn game shipped](./dev-logs/week-04.md) |
 | 2026-04-13 | [Week 3 Audited codebase, identified the exact blocker](./dev-logs/week-03.md) |
 | 2026-04-06 | [Week 2 Researched reference architecture (Pocket Network)](./dev-logs/week-02.md) |
