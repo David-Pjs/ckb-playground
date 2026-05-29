@@ -177,16 +177,17 @@ export function QuesterCard({
           backgroundColor: "var(--color-paper)",
           border: "1px solid var(--color-border-strong)",
           borderRadius: "10px",
-          padding: "32px",
+          padding: "clamp(20px, 5vw, 32px)",
           display: "flex",
-          gap: "28px",
+          gap: "clamp(16px, 4vw, 28px)",
           alignItems: "center",
+          flexWrap: "wrap",
         }}
       >
         <div style={{ flexShrink: 0 }}>
           <Avatar address={address} size={150} />
         </div>
-        <div style={{ minWidth: 0 }}>
+        <div style={{ minWidth: 0, flex: "1 1 200px" }}>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-faint)", letterSpacing: "0.22em" }}>
             CKB QUEST
           </div>

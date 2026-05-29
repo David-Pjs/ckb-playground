@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Fragment } from "react";
 import { useCcc } from "@ckb-ccc/connector-react";
 import { ccc } from "@ckb-ccc/core";
 import { createSpore } from "@ckb-ccc/spore";
@@ -239,32 +239,36 @@ export default function QuestPage() {
 
           {/* Progress bar */}
           <div style={{ marginTop: "24px", display: "flex", alignItems: "center", gap: "8px" }}>
-            {CHECKPOINTS.map((cp, i) => {
-              const state = progress[cp.id];
-              const isDone = state?.status === "complete";
-              const isActive = state?.status === "active";
-              return (
-                <div key={cp.id} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <div style={{
-                    width: "8px",
-                    height: "8px",
-                    borderRadius: "50%",
-                    backgroundColor: isDone ? "var(--color-green)" : isActive ? "var(--color-ink)" : "var(--color-border)",
-                    border: isActive ? "none" : `1.5px solid ${isDone ? "var(--color-green)" : "var(--color-border-strong)"}`,
-                    transition: "background-color 0.3s",
-                  }} />
-                  {i < CHECKPOINTS.length - 1 && (
+            <div style={{ display: "flex", alignItems: "center", gap: "5px", flex: 1, minWidth: 0 }}>
+              {CHECKPOINTS.map((cp, i) => {
+                const state = progress[cp.id];
+                const isDone = state?.status === "complete";
+                const isActive = state?.status === "active";
+                return (
+                  <Fragment key={cp.id}>
                     <div style={{
-                      width: "32px",
-                      height: "1px",
-                      backgroundColor: isDone ? "var(--color-green)" : "var(--color-border)",
+                      width: "8px",
+                      height: "8px",
+                      flexShrink: 0,
+                      borderRadius: "50%",
+                      backgroundColor: isDone ? "var(--color-green)" : isActive ? "var(--color-ink)" : "var(--color-border)",
+                      border: isActive ? "none" : `1.5px solid ${isDone ? "var(--color-green)" : "var(--color-border-strong)"}`,
                       transition: "background-color 0.3s",
                     }} />
-                  )}
-                </div>
-              );
-            })}
-            <span style={{ marginLeft: "8px", fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-muted)" }}>
+                    {i < CHECKPOINTS.length - 1 && (
+                      <div style={{
+                        flex: 1,
+                        minWidth: "3px",
+                        height: "1px",
+                        backgroundColor: isDone ? "var(--color-green)" : "var(--color-border)",
+                        transition: "background-color 0.3s",
+                      }} />
+                    )}
+                  </Fragment>
+                );
+              })}
+            </div>
+            <span style={{ flexShrink: 0, fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-muted)" }}>
               {completedCount}/{CHECKPOINTS.length}
             </span>
           </div>
@@ -478,6 +482,7 @@ function CheckpointCard({
           lineHeight: 1.75,
           color: "var(--color-ink)",
           whiteSpace: "pre-line",
+          overflowWrap: "break-word",
         }}>
           {checkpoint.concept}
         </p>
@@ -501,7 +506,7 @@ function CheckpointCard({
         }}>
           Your task
         </div>
-        <p style={{ fontSize: "14px", color: "var(--color-ink)", lineHeight: 1.6 }}>
+        <p style={{ fontSize: "14px", color: "var(--color-ink)", lineHeight: 1.6, overflowWrap: "break-word" }}>
           {checkpoint.task}
         </p>
       </div>
@@ -532,7 +537,7 @@ function CheckpointCard({
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div style={{ flex: 1 }}>
-                <p style={{ fontSize: "14px", color: "var(--color-ink)", lineHeight: 1.6, marginBottom: step.link || step.windowsNote ? "6px" : 0 }}>
+                <p style={{ fontSize: "14px", color: "var(--color-ink)", lineHeight: 1.6, overflowWrap: "break-word", marginBottom: step.link || step.windowsNote ? "6px" : 0 }}>
                   {step.text}
                 </p>
                 {step.link && (
@@ -563,6 +568,7 @@ function CheckpointCard({
                     fontFamily: "var(--font-ui)",
                     lineHeight: 1.5,
                     marginTop: "4px",
+                    overflowWrap: "break-word",
                   }}>
                     <span style={{ fontFamily: "var(--font-mono)", marginRight: "6px" }}>⊞</span>
                     {step.windowsNote}
