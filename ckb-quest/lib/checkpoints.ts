@@ -15,7 +15,7 @@ export interface Checkpoint {
   steps: Step[];
   inputLabel: string;
   inputPlaceholder: string;
-  inputType: "address" | "txHash" | "typeScriptHash" | "channelId" | "paymentHash";
+  inputType: "address" | "txHash" | "typeScriptHash" | "channelId" | "paymentHash" | "sporeId" | "btcBinding" | "quester";
   verifyHint: string;
 }
 
@@ -246,6 +246,182 @@ You're about to make one of those payments for real.`,
     inputPlaceholder: "0x9f1c44...",
     inputType: "paymentHash",
     verifyHint: "Must be a valid settled payment on Fiber testnet to the quest node",
+  },
+  {
+    id: 6,
+    slug: "lock-your-ckb",
+    title: "Lock Your CKB",
+    subtitle: "Deposit into the Nervos DAO and opt into inflation protection",
+    reward: 150,
+    concept: `CKB has two issuance streams. Primary issuance goes to miners on a halving schedule.
+Secondary issuance is proportional to how much of the total CKB supply is used for state storage.
+
+Without the DAO, secondary issuance dilutes every holder quietly, every block.
+The DAO lets you opt in to receiving your share of it back.
+
+This is not staking. You are not securing the network. You are protecting your
+position in the supply. Deposit, and secondary issuance flows to you instead of past you.
+
+The deposit is one transaction: a cell with the NervosDAO type script and exactly
+8 zero bytes in the data field. That zero placeholder gets replaced with the deposit
+block number when you initiate withdrawal later.`,
+    task: "Deposit at least 100 CKB into the Nervos DAO on testnet. Paste the deposit transaction hash.",
+    steps: [
+      {
+        text: "Open the CCC Playground and connect your wallet.",
+        link: { label: "CCC Playground", url: "https://live.ckbccc.com" },
+      },
+      {
+        text: "Run the Nervos DAO deposit example, which creates a cell with the NervosDAO type script and 8 zero bytes of data.",
+        windowsNote: "You can also use the NervDAO browser app if you prefer a UI.",
+      },
+      {
+        text: "Deposit at least 100 CKB.",
+      },
+      {
+        text: "After confirmation, open the transaction in the testnet explorer. You should see an output labelled 'Nervos DAO Deposit'.",
+        link: { label: "CKB Testnet Explorer", url: "https://pudge.explorer.nervos.org" },
+      },
+      {
+        text: "Paste the deposit transaction hash below.",
+      },
+    ],
+    inputLabel: "Deposit transaction hash",
+    inputPlaceholder: "0xb3109e50...",
+    inputType: "txHash",
+    verifyHint: "Must be a confirmed DAO deposit tx with at least 100 CKB locked",
+  },
+  {
+    id: 7,
+    slug: "write-something-permanent",
+    title: "Write Something Permanent",
+    subtitle: "Mint a Spore: no URL, no IPFS, the actual bytes on-chain",
+    reward: 200,
+    concept: `Most NFTs are a lie. The token is on-chain. The content is not.
+It lives on IPFS, or worse, a centralised server. If that server disappears, the NFT is blank.
+
+Spore Protocol takes a different position: the content goes directly into the cell's data field.
+Not a pointer to the content. The content itself. Text, images, whatever fits.
+As long as CKB runs, the content runs with it. No external dependency, ever.
+
+The cell model makes this possible because cells can hold arbitrary bytes.
+Spore just defines a standard encoding: content-type string + raw content bytes,
+packed into a molecule struct and written into the data field.
+
+Whatever you mint today will still be readable in 20 years if someone runs a node.`,
+    task: "Create a Spore on testnet with any content. Paste the Spore ID.",
+    steps: [
+      {
+        text: "Open the Spore SDK quickstart or the Spore demo app.",
+        link: { label: "docs.spore.pro", url: "https://docs.spore.pro" },
+      },
+      {
+        text: "Write a createCluster transaction if you want to put it in a collection (optional). Otherwise skip straight to minting.",
+      },
+      {
+        text: "Write a createSpore transaction with contentType: 'text/plain' and any content you like.",
+        windowsNote: "Install the SDK: npm install @spore-sdk/core. Run the script with ts-node or tsx.",
+      },
+      {
+        text: "After confirmation, the terminal or explorer will show your Spore ID, which is the type.args of the output cell.",
+        link: { label: "CKB Testnet Explorer", url: "https://pudge.explorer.nervos.org" },
+      },
+      {
+        text: "Paste the Spore ID (the 0x… type args) below.",
+      },
+    ],
+    inputLabel: "Spore ID (type args)",
+    inputPlaceholder: "0x596f780b...",
+    inputType: "sporeId",
+    verifyHint: "Must be a confirmed Spore cell on testnet with non-empty content",
+  },
+  {
+    id: 8,
+    slug: "find-the-bitcoin-ghost",
+    title: "Find the Bitcoin Ghost",
+    subtitle: "Decode a live RGB++ binding: a Bitcoin UTXO hiding inside a CKB cell",
+    reward: 250,
+    concept: `RGB++ binds Bitcoin UTXOs to CKB cells, one-to-one. To transfer an RGB++ asset,
+you spend both the Bitcoin UTXO and the matching CKB cell in a coordinated transaction.
+No bridge operator. No wrapping. The Bitcoin chain provides ownership proof.
+The CKB cell holds the state and contract logic.
+
+Every RGB++ cell on CKB announces exactly which Bitcoin UTXO owns it.
+That ownership is encoded directly in the cell's lock args, 36 bytes:
+
+  VOUT (4 bytes, little-endian) + BTC TXID (32 bytes, little-endian)
+
+That's the whole protocol in one line. Find a live RGB++ cell on CKB mainnet,
+decode those 36 bytes, and you'll see a real Bitcoin TXID staring back at you.
+A Bitcoin UTXO, hiding inside a CKB lock script.`,
+    task: "Query CKB mainnet for a live RGB++ cell. Decode its lock args and submit the bound Bitcoin TXID and VOUT.",
+    steps: [
+      {
+        text: "Write a script that queries the CKB mainnet indexer for RGB++ cells using prefix search on the lock code hash.",
+        link: { label: "CKB Mainnet RPC", url: "https://mainnet.ckb.dev/rpc" },
+      },
+      {
+        text: "The RGB++ lock code hash on mainnet is: 0xbc6c568a1a0d0a09f6844dc9d74ddb4343c32143ff25f727c59edf4fb72d6936 (hash_type: type).",
+        windowsNote: "Install: npm install @rgbpp-sdk/ckb. Use getRgbppLockScript(true) to get the mainnet constants.",
+      },
+      {
+        text: "Take any result cell. Read its lock.args (36 bytes). The first 4 bytes (little-endian) are the VOUT. The next 32 bytes (reversed) are the Bitcoin TXID.",
+      },
+      {
+        text: "Reverse the byte order to recover the human-readable Bitcoin TXID (big-endian). Confirm the VOUT integer.",
+      },
+      {
+        text: "Paste the result below as: txid:vout (e.g. a4a078ff...00:0). The system will verify the cell exists on mainnet.",
+      },
+    ],
+    inputLabel: "Bitcoin TXID:VOUT",
+    inputPlaceholder: "a4a078ff5ff42f2b...00:0",
+    inputType: "btcBinding",
+    verifyHint: "Format: 64-char hex txid colon vout number. Must match a live RGB++ cell on CKB mainnet.",
+  },
+  {
+    id: 9,
+    slug: "mint-your-quester",
+    title: "Mint Your Quester",
+    subtitle: "Put your face on-chain: the capstone of everything you just learned",
+    reward: 175,
+    concept: `Every address that reaches this point has a Quester: a small pixel portrait
+generated deterministically from your CKB address. Same address, same face, every time.
+Nobody assigned it to you. It falls directly out of the bytes of who you are on this chain.
+
+So far the portrait only exists in your browser. This checkpoint makes it permanent.
+
+You mint it as a Spore. Not a link to the image, not an IPFS pin that rots in two years.
+The actual SVG bytes go into the cell's data field, the same way Checkpoint 7 taught you.
+From the moment it confirms, your Quester is a CKB cell that anyone can read for as long
+as the chain runs. You are not buying a profile picture. You are writing your identity
+into permanent on-chain storage and paying the exact capacity it occupies.
+
+This is the whole point of the cell model in one click: arbitrary data, owned by you,
+priced honestly in the space it takes.`,
+    task: "Mint your Quester avatar as a Spore on testnet. One button below builds the transaction, your wallet signs it, and the system verifies the on-chain content is exactly your portrait.",
+    steps: [
+      {
+        text: "Make sure your wallet is connected. Your Quester appears below, generated from your address.",
+      },
+      {
+        text: 'Click "Mint Your Quester". This builds a Spore creation transaction with your portrait SVG as the content and asks your wallet to sign it.',
+        windowsNote: "Nothing to install. The mint happens in the browser through the wallet you already connected.",
+      },
+      {
+        text: "Approve the transaction in your wallet. It costs a few hundred CKB in cell capacity, the honest price of the bytes your portrait occupies, which you can reclaim later by melting the Spore.",
+      },
+      {
+        text: "Wait for confirmation. The system reads your new Spore back from testnet and checks the bytes match your Quester exactly.",
+      },
+      {
+        text: "If the indexer is still catching up when verification runs, just click Verify again in a few seconds.",
+      },
+    ],
+    inputLabel: "Spore ID (filled in automatically after minting)",
+    inputPlaceholder: "0x… minted Spore ID",
+    inputType: "quester",
+    verifyHint: "Verified on-chain: the Spore's content must be the exact avatar generated for your address.",
   },
 ];
 

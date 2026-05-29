@@ -5,6 +5,10 @@ import {
   verifyToken,
   verifyFiberChannel,
   verifyFiberPayment,
+  verifyDaoDeposit,
+  verifySpore,
+  verifyRgbppBinding,
+  verifyQuester,
   sendReward,
 } from "@/lib/ckb";
 import { CHECKPOINTS } from "@/lib/checkpoints";
@@ -51,6 +55,18 @@ export async function POST(req: NextRequest) {
       break;
     case 5:
       result = await verifyFiberPayment(input.trim());
+      break;
+    case 6:
+      result = await verifyDaoDeposit(input.trim());
+      break;
+    case 7:
+      result = await verifySpore(input.trim());
+      break;
+    case 8:
+      result = await verifyRgbppBinding(input.trim());
+      break;
+    case 9:
+      result = await verifyQuester(input.trim(), address);
       break;
     default:
       return NextResponse.json({ ok: false, error: "Unknown checkpoint" }, { status: 400 });

@@ -2,7 +2,14 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useCcc } from "@ckb-ccc/connector-react";
+import { ccc } from "@ckb-ccc/core";
+import { createSpore } from "@ckb-ccc/spore";
 import { CHECKPOINTS, type Checkpoint } from "@/lib/checkpoints";
+import { avatarSvg } from "@/lib/avatar";
+import { Avatar } from "./Avatar";
+import { QuesterCard } from "./QuesterCard";
+
+const QUESTER_KEY = "ckb-quest-quester-spore";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -58,10 +65,16 @@ export default function QuestPage() {
   const [address, setAddress] = useState<string | null>(null);
   const [progress, setProgress] = useState<Record<number, CheckpointState>>({});
   const [verifyStates, setVerifyStates] = useState<Record<number, VerifyState>>({});
+  const [questerSporeId, setQuesterSporeId] = useState<string | null>(null);
+  const [minting, setMinting] = useState(false);
+  const [mintError, setMintError] = useState<string | null>(null);
 
   useEffect(() => {
     const saved = loadProgress();
     setProgress(computeStates(saved));
+    if (typeof window !== "undefined") {
+      setQuesterSporeId(localStorage.getItem(QUESTER_KEY));
+    }
   }, []);
 
   useEffect(() => {
@@ -70,6 +83,7 @@ export default function QuestPage() {
   }, [signer]);
 
   const completedCount = Object.values(progress).filter((s) => s.status === "complete").length;
+  const totalEarned = CHECKPOINTS.filter((c) => progress[c.id]?.status === "complete").reduce((sum, c) => sum + c.reward, 0);
 
   const handleVerify = useCallback(async (checkpoint: Checkpoint, input: string) => {
     if (!address) return;
@@ -127,6 +141,29 @@ export default function QuestPage() {
     }));
   }, [address]);
 
+  const handleMintQuester = useCallback(async (checkpoint: Checkpoint) => {
+    if (!signer || !address) return;
+    setMinting(true);
+    setMintError(null);
+    try {
+      const svg = avatarSvg(address);
+      const { tx, id } = await createSpore({
+        signer,
+        data: { contentType: "image/svg+xml", content: ccc.bytesFrom(svg, "utf8") },
+      });
+      await tx.completeFeeBy(signer);
+      const txHash = await signer.sendTransaction(tx);
+      setQuesterSporeId(id);
+      localStorage.setItem(QUESTER_KEY, id);
+      await signer.client.waitTransaction(txHash);
+      await handleVerify(checkpoint, id);
+    } catch (e) {
+      setMintError((e as Error)?.message ?? String(e));
+    } finally {
+      setMinting(false);
+    }
+  }, [signer, address, handleVerify]);
+
   return (
     <div style={{ minHeight: "100vh", backgroundColor: "var(--color-paper)" }}>
       <div style={{ maxWidth: "680px", margin: "0 auto", padding: "48px 24px 96px" }}>
@@ -147,7 +184,7 @@ export default function QuestPage() {
                 CKB Quest
               </h1>
               <p style={{ color: "var(--color-muted)", fontSize: "14px" }}>
-                5 checkpoints · real transactions · no shortcuts
+                {CHECKPOINTS.length} checkpoints · real transactions · no shortcuts
               </p>
             </div>
             <div style={{ textAlign: "right", flexShrink: 0 }}>
@@ -228,7 +265,7 @@ export default function QuestPage() {
               );
             })}
             <span style={{ marginLeft: "8px", fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-muted)" }}>
-              {completedCount}/5
+              {completedCount}/{CHECKPOINTS.length}
             </span>
           </div>
         </header>
@@ -247,34 +284,48 @@ export default function QuestPage() {
                 address={address}
                 onVerify={handleVerify}
                 onConnect={() => open()}
+                onMint={handleMintQuester}
+                minting={minting}
+                mintError={mintError}
+                questerSporeId={questerSporeId}
               />
             );
           })}
         </div>
 
         {/* Footer */}
-        {completedCount === 5 && (
-          <div style={{
-            marginTop: "64px",
-            padding: "32px",
-            backgroundColor: "var(--color-green-bg)",
-            borderRadius: "8px",
-            textAlign: "center",
-          }}>
-            <p style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "22px",
-              fontWeight: 600,
-              color: "var(--color-green)",
-              marginBottom: "8px",
+        {completedCount === CHECKPOINTS.length && address && (
+          <>
+            <div style={{
+              marginTop: "64px",
+              padding: "32px",
+              backgroundColor: "var(--color-green-bg)",
+              borderRadius: "8px",
+              textAlign: "center",
             }}>
-              All five checkpoints complete.
-            </p>
-            <p style={{ color: "var(--color-muted)", fontSize: "14px" }}>
-              You built on CKB. You sent real transactions. You opened a Fiber channel.<br />
-              Most people in the ecosystem haven't done that.
-            </p>
-          </div>
+              <p style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "22px",
+                fontWeight: 600,
+                color: "var(--color-green)",
+                marginBottom: "8px",
+              }}>
+                All {CHECKPOINTS.length} checkpoints complete.
+              </p>
+              <p style={{ color: "var(--color-muted)", fontSize: "14px" }}>
+                You sent real transactions. Locked CKB in the DAO. Minted permanent on-chain content.<br />
+                Decoded a Bitcoin UTXO hiding inside a CKB lock script. Wrote your identity to the chain.<br />
+                Most people in the ecosystem haven't done any of that.
+              </p>
+            </div>
+            <QuesterCard
+              address={address}
+              cleared={completedCount}
+              total={CHECKPOINTS.length}
+              earned={totalEarned}
+              sporeId={questerSporeId}
+            />
+          </>
         )}
 
       </div>
@@ -291,6 +342,10 @@ function CheckpointCard({
   address,
   onVerify,
   onConnect,
+  onMint,
+  minting,
+  mintError,
+  questerSporeId,
 }: {
   checkpoint: Checkpoint;
   state: CheckpointState;
@@ -298,6 +353,10 @@ function CheckpointCard({
   address: string | null;
   onVerify: (cp: Checkpoint, input: string) => void;
   onConnect: () => void;
+  onMint: (cp: Checkpoint) => void;
+  minting: boolean;
+  mintError: string | null;
+  questerSporeId: string | null;
 }) {
   const [input, setInput] = useState("");
   const isLocked = state.status === "locked";
@@ -541,60 +600,134 @@ function CheckpointCard({
           </div>
         ) : (
           <div>
-            <label style={{
-              display: "block",
-              fontFamily: "var(--font-mono)",
-              fontSize: "11px",
-              color: "var(--color-muted)",
-              marginBottom: "8px",
-            }}>
-              {checkpoint.inputLabel}
-            </label>
-            <div style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder={checkpoint.inputPlaceholder}
-                disabled={verifyState?.loading}
-                style={{
-                  flex: 1,
-                  padding: "10px 12px",
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "12px",
-                  color: "var(--color-ink)",
-                  backgroundColor: "var(--color-surface)",
-                  border: "1px solid var(--color-border-strong)",
-                  borderRadius: "6px",
-                  outline: "none",
-                  minWidth: 0,
-                }}
-              />
-              <button
-                onClick={() => input.trim() && onVerify(checkpoint, input.trim())}
-                disabled={!input.trim() || verifyState?.loading}
-                style={{
-                  backgroundColor: input.trim() && !verifyState?.loading ? "var(--color-ink)" : "var(--color-border)",
-                  color: input.trim() && !verifyState?.loading ? "var(--color-paper)" : "var(--color-faint)",
-                  border: "none",
-                  borderRadius: "6px",
-                  padding: "10px 20px",
-                  fontFamily: "var(--font-ui)",
-                  fontSize: "13px",
-                  fontWeight: 500,
-                  cursor: input.trim() && !verifyState?.loading ? "pointer" : "not-allowed",
-                  flexShrink: 0,
-                  transition: "background-color 0.15s",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {verifyState?.loading ? "Verifying…" : "Verify →"}
-              </button>
-            </div>
+            {checkpoint.inputType === "quester" ? (
+              <div>
+                <div style={{ display: "flex", gap: "20px", alignItems: "center", marginBottom: "20px" }}>
+                  <Avatar address={address} size={88} />
+                  <div>
+                    <p style={{ fontFamily: "var(--font-display)", fontSize: "16px", color: "var(--color-ink)", lineHeight: 1.5 }}>
+                      This is your Quester.
+                    </p>
+                    <p style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-faint)", marginTop: "4px" }}>
+                      generated from {address.slice(0, 12)}…{address.slice(-6)}
+                    </p>
+                  </div>
+                </div>
 
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-faint)", marginTop: "8px" }}>
-              {checkpoint.verifyHint}
-            </p>
+                <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
+                  <button
+                    onClick={() => onMint(checkpoint)}
+                    disabled={minting || verifyState?.loading}
+                    style={{
+                      backgroundColor: minting || verifyState?.loading ? "var(--color-border)" : "var(--color-ink)",
+                      color: minting || verifyState?.loading ? "var(--color-faint)" : "var(--color-paper)",
+                      border: "none",
+                      borderRadius: "6px",
+                      padding: "10px 20px",
+                      fontFamily: "var(--font-ui)",
+                      fontSize: "13px",
+                      fontWeight: 500,
+                      cursor: minting || verifyState?.loading ? "not-allowed" : "pointer",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {minting ? "Minting…" : verifyState?.loading ? "Verifying…" : "Mint Your Quester →"}
+                  </button>
+                  {questerSporeId && !minting && (
+                    <button
+                      onClick={() => onVerify(checkpoint, questerSporeId)}
+                      disabled={verifyState?.loading}
+                      style={{
+                        backgroundColor: "var(--color-surface)",
+                        color: "var(--color-ink)",
+                        border: "1px solid var(--color-border-strong)",
+                        borderRadius: "6px",
+                        padding: "10px 18px",
+                        fontFamily: "var(--font-ui)",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        cursor: verifyState?.loading ? "wait" : "pointer",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      Verify again
+                    </button>
+                  )}
+                </div>
+
+                {questerSporeId && (
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-faint)", marginTop: "10px", wordBreak: "break-all" }}>
+                    minted spore: {questerSporeId}
+                  </p>
+                )}
+                {mintError && (
+                  <p style={{ fontFamily: "var(--font-ui)", fontSize: "12px", color: "var(--color-red)", marginTop: "10px", lineHeight: 1.5 }}>
+                    {mintError}
+                  </p>
+                )}
+
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-faint)", marginTop: "12px" }}>
+                  {checkpoint.verifyHint}
+                </p>
+              </div>
+            ) : (
+              <>
+                <label style={{
+                  display: "block",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "11px",
+                  color: "var(--color-muted)",
+                  marginBottom: "8px",
+                }}>
+                  {checkpoint.inputLabel}
+                </label>
+                <div style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder={checkpoint.inputPlaceholder}
+                    disabled={verifyState?.loading}
+                    style={{
+                      flex: 1,
+                      padding: "10px 12px",
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "12px",
+                      color: "var(--color-ink)",
+                      backgroundColor: "var(--color-surface)",
+                      border: "1px solid var(--color-border-strong)",
+                      borderRadius: "6px",
+                      outline: "none",
+                      minWidth: 0,
+                    }}
+                  />
+                  <button
+                    onClick={() => input.trim() && onVerify(checkpoint, input.trim())}
+                    disabled={!input.trim() || verifyState?.loading}
+                    style={{
+                      backgroundColor: input.trim() && !verifyState?.loading ? "var(--color-ink)" : "var(--color-border)",
+                      color: input.trim() && !verifyState?.loading ? "var(--color-paper)" : "var(--color-faint)",
+                      border: "none",
+                      borderRadius: "6px",
+                      padding: "10px 20px",
+                      fontFamily: "var(--font-ui)",
+                      fontSize: "13px",
+                      fontWeight: 500,
+                      cursor: input.trim() && !verifyState?.loading ? "pointer" : "not-allowed",
+                      flexShrink: 0,
+                      transition: "background-color 0.15s",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {verifyState?.loading ? "Verifying…" : "Verify →"}
+                  </button>
+                </div>
+
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-faint)", marginTop: "8px" }}>
+                  {checkpoint.verifyHint}
+                </p>
+              </>
+            )}
 
             {/* Result */}
             {verifyState?.result && !verifyState.loading && (
