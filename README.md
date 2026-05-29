@@ -13,10 +13,10 @@ HTTP 402 payment middleware powered by CKB Fiber micropayments. Pay-per-request 
 **Stack:** Node.js, x402 protocol, Fiber RPC, CKB
 
 ### [CKB Quest](./ckb-quest/)
-Learn-to-earn game for CKB and Fiber beginners. 5 checkpoints, each requiring a real on-chain action verified against testnet. Complete them all and earn testnet CKB.
+Learn-to-earn game for CKB and Fiber beginners. 9 checkpoints, each requiring a real on-chain action verified against testnet, ending with The Quester: a pixel identity you mint as a Spore so your own bytes live on-chain. Complete them all and earn testnet CKB.
 
-**Status:** Built, testing  
-**Stack:** Next.js 15, TypeScript, @ckb-ccc, JoyID, Groq (llama-3.3-70b)
+**Status:** Live on testnet, 9 checkpoints (Checkpoints 4 and 5 await a live Fiber node)  
+**Stack:** Next.js 15, TypeScript, @ckb-ccc, @ckb-ccc/spore, JoyID, Groq (llama-3.3-70b)
 
 ---
 
@@ -26,6 +26,7 @@ Build updates, blockers, and what's next.
 
 | Date | Entry |
 |------|-------|
+| 2026-05-29 | [Week 6 CKB Quest Phase 3: The Quester, an on-chain identity](./dev-logs/week-06.md) |
 | 2026-05-15 | [Week 5 CKB Quest Phase 2: DAO, Spore, RGB++](./dev-logs/week-05.md) |
 | 2026-05-04 | [Week 4 CKB Quest: learn-to-earn game shipped](./dev-logs/week-04.md) |
 | 2026-04-13 | [Week 3 Audited codebase, identified the exact blocker](./dev-logs/week-03.md) |
