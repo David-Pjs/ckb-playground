@@ -22,13 +22,13 @@ function subtle(): SubtleCrypto {
 async function deriveKey(passphrase: string, salt: Uint8Array, iter: number): Promise<CryptoKey> {
   const baseKey = await subtle().importKey(
     "raw",
-    new TextEncoder().encode(passphrase),
+    new TextEncoder().encode(passphrase) as BufferSource,
     "PBKDF2",
     false,
     ["deriveKey"],
   );
   return subtle().deriveKey(
-    { name: "PBKDF2", salt, iterations: iter, hash: "SHA-256" },
+    { name: "PBKDF2", salt: salt as BufferSource, iterations: iter, hash: "SHA-256" },
     baseKey,
     { name: "AES-GCM", length: 256 },
     false,
@@ -41,7 +41,7 @@ export async function encryptBytes(plaintext: Uint8Array, passphrase: string): P
   const iv = globalThis.crypto.getRandomValues(new Uint8Array(IV_BYTES));
   const key = await deriveKey(passphrase, salt, PBKDF2_ITERATIONS);
   const ciphertext = new Uint8Array(
-    await subtle().encrypt({ name: "AES-GCM", iv }, key, plaintext),
+    await subtle().encrypt({ name: "AES-GCM", iv: iv as BufferSource }, key, plaintext as BufferSource),
   );
   return { ciphertext, salt, iv, iter: PBKDF2_ITERATIONS };
 }
@@ -54,6 +54,10 @@ export async function decryptBytes(
   iter: number,
 ): Promise<Uint8Array> {
   const key = await deriveKey(passphrase, salt, iter);
-  const plaintext = await subtle().decrypt({ name: "AES-GCM", iv }, key, ciphertext);
+  const plaintext = await subtle().decrypt(
+    { name: "AES-GCM", iv: iv as BufferSource },
+    key,
+    ciphertext as BufferSource,
+  );
   return new Uint8Array(plaintext);
 }
