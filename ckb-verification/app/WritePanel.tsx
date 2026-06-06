@@ -64,7 +64,7 @@ export function WritePanel({ signer, onConnect }: Props) {
   }
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-8">
       <div>
         <label className="label" htmlFor="title">Title</label>
         <input
@@ -116,8 +116,8 @@ export function WritePanel({ signer, onConnect }: Props) {
         />
       )}
 
-      <div className="bg-raised border border-border px-4 py-3.5">
-        <div className="flex items-center justify-between mb-2.5">
+      <div className="bg-raised border border-border px-5 py-4">
+        <div className="flex items-center justify-between mb-3">
           <span className="label mb-0">Transaction preview</span>
           <span className="text-xs text-muted font-mono">{est.cells} cells</span>
         </div>
@@ -138,7 +138,7 @@ export function WritePanel({ signer, onConnect }: Props) {
       )}
 
       {result && (
-        <div className="border border-green bg-green-bg px-4 py-4 space-y-3">
+        <div className="border border-green bg-green-bg px-5 py-5 space-y-3">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-green inline-block" />
             <span className="text-sm font-medium text-green">

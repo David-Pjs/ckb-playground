@@ -31,7 +31,7 @@ export function ReadPanel({ client }: Props) {
   }
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-8">
       <div>
         <label className="label" htmlFor="txhash">Transaction hash</label>
         <input
@@ -68,10 +68,10 @@ export function ReadPanel({ client }: Props) {
       )}
 
       {!result && !error && !busy && (
-        <p className="text-sm text-faint border-l-2 border-border pl-4 leading-relaxed">
+        <div className="bg-raised border border-border px-5 py-4 text-sm text-faint leading-relaxed">
           Paste the transaction hash of a document written with this tool. It is read straight from the
           transaction, so it stays readable even after the cells are spent.
-        </p>
+        </div>
       )}
 
       {result && (
