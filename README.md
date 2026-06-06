@@ -18,6 +18,12 @@ Learn-to-earn game for CKB and Fiber beginners. 9 checkpoints, each requiring a 
 **Status:** Live on testnet, 9 checkpoints (Checkpoints 4 and 5 await a live Fiber node)  
 **Stack:** Next.js 15, TypeScript, @ckb-ccc, @ckb-ccc/spore, JoyID, Groq (llama-3.3-70b)
 
+### [CKB Verification](./ckb-verification/)
+Write a whole document onto CKB by splitting it across many cells (a manifest cell plus one cell per chunk), encrypted client side and sealed with a content hash. Read any document back from its transaction and prove every byte. The foundation for verifiable certificates: one cell cannot hold a book, so the book is made of cells.
+
+**Status:** Engine and app built, builds clean, runs on testnet (live signed write and Vercel deploy next). MarkItDown and issuer-signature trust anchor planned.  
+**Stack:** Next.js 15, TypeScript, Tailwind, @ckb-ccc, WebCrypto, JoyID and MetaMask
+
 ---
 
 ## Dev Log
@@ -26,7 +32,7 @@ Build updates, blockers, and what's next.
 
 | Date | Entry |
 |------|-------|
-| 2026-06-05 | [Week 7 Permanent documents on CKB: the certificate concept and its architecture](./dev-logs/week-07.md) |
+| 2026-06-05 | [Week 7 Documents you can prove on CKB: shipping ckb-verification](./dev-logs/week-07.md) |
 | 2026-05-29 | [Week 6 CKB Quest Phase 3: The Quester, an on-chain identity](./dev-logs/week-06.md) |
 | 2026-05-15 | [Week 5 CKB Quest Phase 2: DAO, Spore, RGB++](./dev-logs/week-05.md) |
 | 2026-05-04 | [Week 4 CKB Quest: learn-to-earn game shipped](./dev-logs/week-04.md) |
@@ -49,6 +55,7 @@ Project screenshots live in [`screenshots/`](./screenshots/), organised by proje
 ```
 ckb-playground/
   ckb-quest/          CKB Quest learn-to-earn game
+  ckb-verification/   On-chain document storage and verification
   fiber-402/          Fiber-402 project code
   dev-logs/           Weekly build logs
   screenshots/        Screenshots by project
