@@ -20,11 +20,11 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Codex - documents that live on CKB",
-  description: "Write a whole document onto Nervos CKB. One cell cannot hold a book, so the book is made of cells. Chunked, encrypted, hash-verified, owned.",
+  title: "CKB Verification: prove a document on chain",
+  description: "Write a whole document across CKB cells, encrypted and hash sealed, then read it back and prove it has not changed. One cell cannot hold a book, so the book is made of cells.",
   openGraph: {
-    title: "Codex - documents that live on CKB",
-    description: "One cell cannot hold a book, so the book is made of cells. Long-form documents stored across CKB cells, encrypted and hash-verified.",
+    title: "CKB Verification: prove a document on chain",
+    description: "Documents stored across CKB cells, encrypted client side and hash verified. Read any one back from its transaction and prove every byte.",
   },
 };
 
