@@ -26,6 +26,7 @@ Build updates, blockers, and what's next.
 
 | Date | Entry |
 |------|-------|
+| 2026-06-05 | [Week 7 Permanent documents on CKB: the certificate concept and its architecture](./dev-logs/week-07.md) |
 | 2026-05-29 | [Week 6 CKB Quest Phase 3: The Quester, an on-chain identity](./dev-logs/week-06.md) |
 | 2026-05-15 | [Week 5 CKB Quest Phase 2: DAO, Spore, RGB++](./dev-logs/week-05.md) |
 | 2026-05-04 | [Week 4 CKB Quest: learn-to-earn game shipped](./dev-logs/week-04.md) |
