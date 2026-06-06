@@ -1,19 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #f7f4ef;
+  --color-paper: #ffffff;
   --color-surface: #ffffff;
-  --color-ink: #1a1916;
-  --color-muted: #6b6560;
-  --color-faint: #9e9890;
-  --color-border: #e4e0d8;
-  --color-border-strong: #ccc8bf;
+  --color-ink: #16160f;
+  --color-muted: #5c5c54;
+  --color-faint: #8d8d84;
+  --color-border: #e6e6e1;
+  --color-border-strong: #cfcfc8;
   --color-green: #16773d;
-  --color-green-bg: #edf7f1;
+  --color-green-bg: #f1f8f3;
   --color-red: #b52319;
   --color-red-bg: #fdf1f0;
-  --color-amber: #976512;
-  --color-amber-bg: #fdf6e8;
 
   --font-display: "Fraunces Variable", Georgia, serif;
   --font-ui: "Inter", system-ui, sans-serif;
@@ -36,12 +34,12 @@ html {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-green) 15%, transparent);
+  background: color-mix(in srgb, var(--color-green) 18%, transparent);
 }
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 3px; }
 
-textarea, input { font-family: inherit; color: inherit; }
+textarea, input { font-family: inherit; color: inherit; background: transparent; }
 textarea:focus, input:focus { outline: none; }
