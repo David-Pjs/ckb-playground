@@ -87,14 +87,19 @@ export function ReadPanel({ client }: Props) {
             </div>
             {result.verified ? (
               <span className="shrink-0 inline-flex items-center gap-1.5 text-xs text-green border border-green px-2.5 py-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-green" /> Integrity verified
+                <span className="w-1.5 h-1.5 rounded-full bg-green" /> Content intact
               </span>
             ) : (
               <span className="shrink-0 inline-flex items-center gap-1.5 text-xs text-red border border-red px-2.5 py-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-red" /> Integrity failed
+                <span className="w-1.5 h-1.5 rounded-full bg-red" /> Content altered
               </span>
             )}
           </div>
+          <p className="px-4 py-2.5 border-b border-border text-xs text-muted leading-relaxed">
+            {result.verified
+              ? "These bytes match the hash stored in the manifest, so the content has not changed since it was written. This does not prove who wrote it. Issuer signatures come next."
+              : "These bytes do not match the hash in the manifest. The content was changed after it was written, or the wrong passphrase was used."}
+          </p>
           <div className="px-4 pt-3 pb-1 border-b border-border">
             <CellStrip chunkCount={result.manifest.chunkCount} />
           </div>
