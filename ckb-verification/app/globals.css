@@ -19,12 +19,6 @@
   --font-mono: "JetBrains Mono Variable", "Courier New", monospace;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
 html {
   background-color: var(--color-paper);
   color: var(--color-ink);
