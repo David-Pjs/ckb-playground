@@ -22,10 +22,10 @@ New entries follow [`weekly-reports/TEMPLATE.md`](./weekly-reports/TEMPLATE.md).
 
 ## Active Projects
 
-### [Fiber-402](./fiber-402/)
+### Fiber-402
 HTTP 402 payment middleware powered by CKB Fiber micropayments. Pay-per-request infrastructure for AI agents and API services a real-money toll gate, not a demo.
 
-**Status:** Building need a live Fiber node connected to replace mock fallback  
+**Status:** Building need a live Fiber node connected to replace mock fallback (code local, not published yet)  
 **Stack:** Node.js, x402 protocol, Fiber RPC, CKB
 
 ### [CKB Quest](./ckb-quest/)
@@ -54,7 +54,6 @@ Project screenshots live in [`screenshots/`](./screenshots/), organised by week.
 ckb-playground/
   ckb-quest/          CKB Quest learn-to-earn game
   ckb-verification/   On-chain document storage and verification
-  fiber-402/          Fiber-402 project code
   weekly-reports/     Weekly reports (current series)
     archive-builders-track/   CKB builders track reports, Jan-Mar 2026
   screenshots/        Screenshots by week
