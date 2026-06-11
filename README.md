@@ -22,12 +22,6 @@ New entries follow [`weekly-reports/TEMPLATE.md`](./weekly-reports/TEMPLATE.md).
 
 ## Active Projects
 
-### Fiber-402
-HTTP 402 payment middleware powered by CKB Fiber micropayments. Pay-per-request infrastructure for AI agents and API services a real-money toll gate, not a demo.
-
-**Status:** Building need a live Fiber node connected to replace mock fallback (code local, not published yet)  
-**Stack:** Node.js, x402 protocol, Fiber RPC, CKB
-
 ### [CKB Quest](./ckb-quest/)
 Learn-to-earn game for CKB and Fiber beginners. 9 checkpoints, each requiring a real on-chain action verified against testnet, ending with The Quester: a pixel identity you mint as a Spore so your own bytes live on-chain. Complete them all and earn testnet CKB.
 
@@ -39,6 +33,13 @@ Write a whole document onto CKB by splitting it across many cells (a manifest ce
 
 **Status:** Engine and app built, builds clean, runs on testnet (live signed write and Vercel deploy next). MarkItDown and issuer-signature trust anchor planned.  
 **Stack:** Next.js 15, TypeScript, Tailwind, @ckb-ccc, WebCrypto, JoyID and MetaMask
+
+---
+
+## Paused
+
+### Fiber-402
+HTTP 402 payment middleware powered by CKB Fiber micropayments, started at a hackathon. Weeks 1-3 of the weekly reports cover it. Paused until I can run a live Fiber node; the code stays local until then. Picking it back up is the plan, not a maybe.
 
 ---
 
