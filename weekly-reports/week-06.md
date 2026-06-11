@@ -1,116 +1,74 @@
-# Week 6 - CCC Deep Dive & Application Design
+# Week 6 - CKB Quest Phase 3: The Quester, an on-chain identity
 
-**Name:** David
-**Week Ending:** 2026-03-13
+**Name:** David Uhumagho
+**Week Ending:** 2026-05-29
+**Project:** CKB Quest
 
 ---
 
-## Courses / Material Completed
+## Current Progress
 
-- [x] Studied CCC SDK documentation and source examples
-- [x] Explored CCC Playground (live.ckbccc.com) - ran transaction examples
-- [x] Reviewed existing batch-transfer project as foundation for app
-- [x] Designed application architecture
-- [x] Chose application concept and defined scope
+- Shipped CKB Quest Phase 3: Checkpoint 9, mint your Quester (a pixel identity generated deterministically from your address) as a Spore
+- Server-side verification regenerates the avatar and checks the on-chain bytes match your portrait exactly
+- Added a shareable completion card: PNG download plus an X share link
+- Fixed mobile overflow: progress bar, long hashes, and the completion card all behave on small screens
+- Reward pool now 1,500 CKB across 9 checkpoints; deployed to production
 
 ## Key Learnings
 
-### CCC Architecture
+- Deterministic SVG generation (FNV-1a hash + mulberry32 PRNG, integer-only) is what makes byte-exact client/server verification possible
+- Cell capacity prices the image: shrinking the SVG from ~1,386 to ~440 bytes cut the mint cost from ~1,500 to ~570 CKB
+- The indexer lags a few seconds after a mint, so the UI needs a retry path or a slow indexer looks like a failure
 
-CCC (Common Chain Connector) is built around three core concepts:
+## Pending
 
-**Client** — connects to the network (devnet, testnet, mainnet). Created once and reused:
-```typescript
-const client = new ccc.ClientPublicTestnet();
-```
+- Run the Checkpoint 9 mint end to end with a real funded wallet
+- Stand up a Fiber node (likely Docker) to unblock Checkpoints 4-5 and Fiber-402 at the same time
 
-**Signer** — wraps a private key or wallet and handles signing. The signer knows which network to use via its client:
-```typescript
-const signer = new ccc.SignerCkbPrivateKey(client, privateKey);
-```
+---
 
-**Transaction** — built declaratively by describing desired outputs, then completed by CCC:
-```typescript
-const tx = ccc.Transaction.from({ outputs: [...], outputsData: [...] });
-await tx.completeInputsByCapacity(signer);  // CCC picks which cells to consume
-await tx.completeFeeBy(signer, 1000);       // CCC calculates the fee
-await signer.sendTransaction(tx);           // Sign and broadcast
-```
+## What I Built
 
-### Key CCC Methods Used
+Phase 3 of CKB Quest. The first eight checkpoints teach the mechanics of CKB: cells, transfers, tokens, the DAO, Spore, RGB++. Phase 3 adds a ninth that turns all of it personal. You finish the quest by writing yourself onto the chain.
 
-| Method | What it does |
-|--------|-------------|
-| `ccc.fixedPointFrom(amount)` | Converts human CKB amount to Shannons |
-| `ccc.numLeToBytes(amount, 16)` | Encodes token amount as 16-byte little-endian (for xUDT) |
-| `ccc.Script.fromKnownScript(client, KnownScript.XUdt, args)` | Gets the xUDT type script for a given token |
-| `tx.addCellDepsOfKnownScripts(client, KnownScript.XUdt)` | Adds the xUDT script cell dependency to the tx |
-| `cccClient.findCellsByType(typeScript, true)` | Finds all live cells with a given type script |
+Total reward pool is now 1,500 CKB across 9 checkpoints.
 
-### Why CCC over raw RPC
+## Checkpoint 9: Mint Your Quester
 
-Without CCC you would need to manually:
-- Query UTXOs (cells) one by one via RPC
-- Calculate exact capacities for each output
-- Manually select input cells to cover the total
-- Serialize the transaction in the correct binary format
-- Compute the transaction hash
-- Sign it with the private key
-- Broadcast via RPC
+Every address that reaches this point has a Quester: a small pixel portrait generated deterministically from the address itself. Same address, same face, every time. Nobody assigns it. It falls out of the bytes of who you are on this chain.
 
-CCC handles all of this. `completeInputsByCapacity` alone replaces about 50 lines of manual UTXO selection code.
+So far the portrait only lives in the browser. The checkpoint makes it permanent. You mint it as a Spore, one click, signed in your own wallet. The actual SVG bytes go into the cell's data field, the same lesson as Checkpoint 7, except now the thing you are storing forever is your own identity.
 
-## Application Concept
+Verification is the part I am proud of. The server regenerates the avatar for your address and reads the minted Spore back from testnet, then checks that the on-chain content matches your portrait byte for byte. You cannot fake it, and you cannot paste in someone else's Spore. The proof is the exact bytes.
 
-### Token Airdrop Tool
+## The Shareable Card
 
-**What it does:** A dApp that lets you issue a custom xUDT token and airdrop it to multiple addresses in a single transaction.
+When all nine checkpoints are done, a completion card appears: the avatar, how many checkpoints you cleared, total CKB earned, and the Spore ID once minted. It downloads as a PNG and has a share link for X. Every finisher becomes a small piece of distribution instead of hitting a dead end at the bottom of the page.
 
-**Why this:** I already built a batch CKB transfer tool (`projects/batch-transfer`). This extends that work by adding xUDT token support — combining everything learned in Weeks 3, 4, and 5 into one useful tool.
+## Technical Notes
 
-**Core features:**
-1. Issue a new xUDT token (set name + total supply)
-2. Paste a list of recipient addresses + token amounts
-3. Send tokens to all recipients in one transaction
-4. View transaction on testnet explorer
+**Determinism is the whole trick.** The avatar comes from an FNV-1a hash of the address seeding a mulberry32 PRNG, integer operations only, emitting SVG with integer coordinates. That guarantees the client and the server produce the exact same string. The byte identity is what makes the verification airtight.
 
-**How it differs from the existing batch-transfer:**
-- Current batch-transfer sends CKB only
-- New app sends custom xUDT tokens
-- Adds token issuance step before distribution
-- Uses xUDT Type Script on each output cell
+**Capacity is the price of the image.** On CKB you pay cell capacity per byte, so a bigger picture is a bigger bill. The naive SVG was about 1,386 bytes, which would have cost roughly 1,500 CKB to mint right at the finish line. I rewrote it as a single path with one fill, about 440 bytes, so the mint costs around 570 CKB. The size of your portrait is literally its price, which is a clean way to feel the cell model.
 
-### Architecture Plan
+**No hand-rolled molecule encoding.** I used createSpore from @ckb-ccc/spore for the mint and findSpore for verification, so the SDK handles the Spore data packing and the testnet script resolution.
 
-```
-projects/token-airdrop/
-  lib.ts          - issueToken(), airdropToken(), parseRecipients()
-  ccc-client.ts   - testnet client config
-  index.tsx       - React UI
-  index.html
-  package.json
-```
+**Indexer lag.** Right after a mint the indexer can take a few seconds to see the new cell. The UI has a Verify again button for exactly that, so a slow indexer does not look like a failure.
 
-**Transaction flow for airdrop:**
-1. For each recipient, create an output cell with:
-   - Lock Script = recipient's address
-   - Type Script = xUDT script with token ID as args
-   - Data = token amount encoded as 16-byte little-endian
-2. Complete inputs (sender's existing token cells + CKB for capacity)
-3. Add xUDT cell dep
-4. Sign and send
+## Mobile
 
-### Comparison of App Ideas Considered
+The page was overflowing on phones. Three causes, all fixed:
 
-| Idea | Pros | Cons | Decision |
-|------|------|------|----------|
-| Token Airdrop Tool | Extends existing work, practical, uses xUDT | Requires understanding token cells | **Chosen** |
-| On-chain Guestbook | Simple, easy to build | Already done in Week 3 (store data) | Skip |
-| NFT Collection | Uses Spore, creative | More complex, Spore SDK overhead | Later |
+- The nine-checkpoint progress bar was a fixed track around 490 pixels wide, which cannot fit a 360 pixel screen and dragged the whole layout wider. Rebuilt it as a flex row with flexible connectors, so it fills whatever width is there and shrinks cleanly.
+- Long code hashes and addresses in the lesson text were single unbroken tokens that ran off the edge. They now wrap.
+- The completion card stacks the avatar above the text on narrow screens instead of squeezing them side by side.
 
-## Plan for Next Week
+## Deployment
 
-- Set up `projects/token-airdrop/` project structure
-- Implement `issueToken()` and `airdropToken()` functions in lib.ts
-- Build basic UI with React
-- Test token issuance on testnet
+Built clean, zero errors, deployed to production on Vercel.
+
+## What's Next
+
+- Run the Checkpoint 9 mint end to end with a real wallet and testnet CKB. The path is build verified but I have not signed a live mint yet.
+- Stand up a Fiber node, most likely through Docker, to unblock Checkpoints 4 and 5 and the Fiber-402 project at the same time. That is next week's main job.
+- Get real people through the quest and watch where they get stuck.

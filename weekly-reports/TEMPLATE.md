@@ -1,34 +1,27 @@
-# Weekly Report - Week [N]
+# Week N - Title of the week
 
-**Name:** David
-**Week Ending:** [DATE]
+**Name:** David Uhumagho
+**Week Ending:** YYYY-MM-DD
+**Project:** Fiber-402 / CKB Quest / ckb-verification
 
 ---
 
-## Courses / Material Completed
+## Current Progress
 
-- [ ] [List what you studied, read, or watched this week]
-- [ ] [Include links to specific docs/tutorials]
-
-## Key Learnings
-
-[2-3 paragraphs summarizing what you understood this week. Focus on concepts, not just listing what you did. For example: "I learned how the Cell model differs from Ethereum's account model because..." ]
-
-## Practical Progress
-
-- [What you actually built, ran, or deployed]
-- [Commands you ran, transactions you made]
-- [Include transaction hashes if applicable]
+- What shipped or moved forward this week, one bullet each
 
 ## Screenshots
 
-[Reference screenshots stored in /screenshots/week-N/]
+![What the screenshot shows](../screenshots/week-NN/filename.png)
 
-## Blockers / Questions
+## Key Learnings
 
-- [Anything you're stuck on]
-- [Questions for Neon or DevRel]
+- Technical things learned this week, one bullet each
 
-## Plan for Next Week
+## Pending
 
-- [What you intend to work on next]
+- What is blocked or carries over to next week
+
+---
+
+Optional: full write-up below this line. Architecture notes, decisions, deep dives.

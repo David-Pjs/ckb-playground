@@ -1,6 +1,22 @@
 # David Uhumagho Building on CKB
 
-Building payment infrastructure and applications on Nervos CKB. This repo is where the work lives.
+Building payment infrastructure and applications on Nervos CKB. This repo is where the work lives. (Learning and Building in Public)
+
+---
+
+## Weekly Reports
+
+Every week gets a report: what shipped, key learnings, what is pending.
+
+- [Week 1 - First attempt at running a Fiber node](./weekly-reports/week-01.md)
+- [Week 2 - Researched reference architecture (Pocket Network)](./weekly-reports/week-02.md)
+- [Week 3 - Audited codebase, identified the exact blocker](./weekly-reports/week-03.md)
+- [Week 4 - CKB Quest: learn-to-earn game shipped](./weekly-reports/week-04.md)
+- [Week 5 - CKB Quest Phase 2: DAO, Spore, RGB++](./weekly-reports/week-05.md)
+- [Week 6 - CKB Quest Phase 3: The Quester, an on-chain identity](./weekly-reports/week-06.md)
+- [Week 7 - Documents you can prove on CKB: shipping ckb-verification](./weekly-reports/week-07.md)
+
+New entries follow [`weekly-reports/TEMPLATE.md`](./weekly-reports/TEMPLATE.md).
 
 ---
 
@@ -26,27 +42,9 @@ Write a whole document onto CKB by splitting it across many cells (a manifest ce
 
 ---
 
-## Dev Log
-
-Build updates, blockers, and what's next.
-
-| Date | Entry |
-|------|-------|
-| 2026-06-05 | [Week 7 Documents you can prove on CKB: shipping ckb-verification](./dev-logs/week-07.md) |
-| 2026-05-29 | [Week 6 CKB Quest Phase 3: The Quester, an on-chain identity](./dev-logs/week-06.md) |
-| 2026-05-15 | [Week 5 CKB Quest Phase 2: DAO, Spore, RGB++](./dev-logs/week-05.md) |
-| 2026-05-04 | [Week 4 CKB Quest: learn-to-earn game shipped](./dev-logs/week-04.md) |
-| 2026-04-13 | [Week 3 Audited codebase, identified the exact blocker](./dev-logs/week-03.md) |
-| 2026-04-06 | [Week 2 Researched reference architecture (Pocket Network)](./dev-logs/week-02.md) |
-| 2026-03-30 | [Week 1 First attempt at running a Fiber node](./dev-logs/week-01.md) |
-
-New entries go in [`dev-logs/`](./dev-logs/) using [`TEMPLATE.md`](./dev-logs/TEMPLATE.md).
-
----
-
 ## Screenshots
 
-Project screenshots live in [`screenshots/`](./screenshots/), organised by project folder.
+Project screenshots live in [`screenshots/`](./screenshots/), organised by week.
 
 ---
 
@@ -57,17 +55,17 @@ ckb-playground/
   ckb-quest/          CKB Quest learn-to-earn game
   ckb-verification/   On-chain document storage and verification
   fiber-402/          Fiber-402 project code
-  dev-logs/           Weekly build logs
-  screenshots/        Screenshots by project
+  weekly-reports/     Weekly reports (current series)
+    archive-builders-track/   CKB builders track reports, Jan-Mar 2026
+  screenshots/        Screenshots by week
   projects/           Earlier CKB work (builders track, 2026)
-  weekly-reports/     CKB builders track reports (archive)
 ```
 
 ---
 
 <details>
-<summary>CKB Builders Track completed Jan–Mar 2026</summary>
+<summary>CKB Builders Track completed Jan-Mar 2026</summary>
 
-12-week programme on Nervos CKB. Covered the Cell model, Scripts, CKB-VM, xUDT tokens, Spore Protocol, Nervos DAO, RGB++ Protocol, and shipped a token airdrop app on testnet. Weekly reports in [`weekly-reports/`](./weekly-reports/).
+12-week programme on Nervos CKB. Covered the Cell model, Scripts, CKB-VM, xUDT tokens, Spore Protocol, Nervos DAO, RGB++ Protocol, and shipped a token airdrop app on testnet. Weekly reports in [`weekly-reports/archive-builders-track/`](./weekly-reports/archive-builders-track/).
 
 </details>

@@ -18,8 +18,11 @@ function readDir(dir: string, pattern: RegExp): string {
 }
 
 export function getCKBKnowledge(): string {
-  const weeklyReports = readDir("weekly-reports", /^week-\d+\.md$/);
-  const devLogs = readDir("dev-logs", /^week-\d+\.md$/);
+  const weeklyReports = readDir(
+    path.join("weekly-reports", "archive-builders-track"),
+    /^week-\d+\.md$/,
+  );
+  const devLogs = readDir("weekly-reports", /^week-\d+\.md$/);
 
   return `You are a CKB blockchain educator embedded in CKB Quest, a learn-to-earn game built on the Nervos CKB testnet.
 You have deep expertise in the Nervos ecosystem: CKB's Cell Model, Lock Scripts, Type Scripts, xUDT tokens, and the Fiber Network.

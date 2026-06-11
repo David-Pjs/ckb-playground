@@ -1,97 +1,71 @@
-# Week 5 - Lock Scripts & CCC Exploration
+# Week 5 - CKB Quest Phase 2: DAO, Spore, RGB++
 
-**Name:** David
-**Week Ending:** 2026-03-06
+**Name:** David Uhumagho
+**Week Ending:** 2026-05-15
+**Project:** CKB Quest
 
 ---
 
-## Courses / Material Completed
+## Current Progress
 
-- [x] Read the [Build a Simple Lock](https://docs.nervos.org/docs/dapp/simple-lock) tutorial end-to-end
-- [x] Cloned and studied the simple-lock example code
-- [x] Understood the hash_lock contract logic
-- [ ] Successfully deployed hash_lock to devnet (blocked - see below)
-- [x] Explored CCC Playground at live.ckbccc.com
-- [x] Reviewed CCC SDK documentation and examples
+- Shipped CKB Quest Phase 2: three advanced checkpoints covering Nervos DAO deposits, Spore Protocol mints, and RGB++ mainnet queries
+- Reward pool now 1,325 CKB across 8 checkpoints
+- Deployed to production on Vercel, clean build
 
 ## Key Learnings
 
-### How the hash_lock Script Works
+- Use client.getKnownScript(KnownScript.NervosDao) instead of hardcoding code hashes; it resolves the right deployment per network
+- RGB++ lock args store the Bitcoin TXID and VOUT little-endian, byte-reversed from what explorers display
+- Spore is not a CCC known script, so its official testnet code hash has to be hardcoded
 
-The simple-lock tutorial introduces writing your own Lock Script from scratch. Instead of the standard secp256k1 signature lock, `hash_lock` uses a simpler mechanism:
+## Pending
 
-1. When creating the lock, you store a **hash** (e.g. blake2b hash of the word "hello") in the script args
-2. To unlock and spend the cell, you provide the **preimage** (the original word "hello") in the transaction witness
-3. The script hashes the preimage and checks it matches the stored hash
-4. If they match - cell is unlocked. If not - transaction rejected.
+- Get users through checkpoints 6-8 and see where they get stuck
+- Fiber checkpoints 4-5 still blocked on a live node
 
-This is like a combination lock. Instead of needing a private key signature, you just need to know the secret word.
+---
 
-The script logic in TypeScript:
-```typescript
-// Read expected hash from script args
-const expectedHash = Script.args;
-// Read preimage from witness
-const preimage = Transaction.witness[0];
-// Hash the preimage
-const computedHash = blake2b(preimage);
-// Compare
-if (computedHash !== expectedHash) throw Error("hash mismatch");
-```
+## What I Built
 
-**Important:** This is a toy example - NOT for production. It's vulnerable to miner front-running (once you broadcast the preimage in a transaction, miners can copy it and steal the funds before your tx confirms).
+Shipped Phase 2 of CKB Quest: three new checkpoints from the advanced topics in my 13-week builders track. The original five covered the basics: wallet, transfers, xUDT tokens, Fiber channels, Fiber payments. Phase 2 goes into the parts of CKB most developers never reach.
 
-### How Custom Scripts Get Deployed
+Total reward pool is now 1,325 CKB across 8 checkpoints.
 
-This tutorial is fundamentally different from Weeks 3-4. Instead of using pre-deployed system scripts (xUDT, Spore), you deploy your own script:
+## The 3 New Checkpoints
 
-1. Write the script logic in TypeScript
-2. Compile it to RISC-V bytecode using ckb-js-vm + ckb-debugger
-3. Deploy the bytecode as a Cell on devnet (the code lives in the cell's data field)
-4. Create a `scripts.json` file with the deployment OutPoint
-5. Your frontend references that OutPoint to use the script
+**Checkpoint 6 - Lock Your CKB (150 CKB reward)**  
+Nervos DAO deposit on testnet. The concept I wanted to land here is the distinction between staking and inflation protection. The DAO is not proof-of-stake. You are not securing the network. You are opting in to your share of secondary issuance, the inflation that would otherwise dilute your position every block. The deposit itself is one transaction: a cell with the NervosDAO type script and exactly `0x0000000000000000` in the data field.
 
-This is how ALL scripts on CKB work - even the system ones. They're just cells containing RISC-V bytecode.
+Verification: fetch the submitted TX hash, use CCC's `getKnownScript(KnownScript.NervosDao)` to get the correct type script (no hardcoded hashes), then check that an output cell has that type script attached and 8 zero bytes of data. Minimum 100 CKB.
 
-### CCC - Common Chain Connector
+**Checkpoint 7 - Write Something Permanent (200 CKB reward)**  
+Spore Protocol mint on testnet. Most NFTs are a pointer to a URL that might disappear. Spore stores the content, the actual bytes, directly in the cell's data field. As long as CKB runs, the content runs. No external dependency.
 
-CCC is the official JavaScript/TypeScript SDK for building on CKB. It abstracts away the low-level transaction building we've been doing manually. Key things I explored:
+Verification: user submits the Spore ID (the type args of the output cell). Query testnet for a cell with the Spore type script at that exact args, confirm the data field is non-empty. The Spore ID is unique per mint, there is no way to fake it.
 
-- **CCC Playground** (live.ckbccc.com) - interactive environment to test CCC code in the browser
-- **Signer abstraction** - CCC supports multiple wallet types (private key, JoyID, MetaMask via RGB++) through a unified interface
-- **Transaction building** - `completeInputsByCapacity`, `completeFeeBy` handle UTXO selection and fee calculation automatically
-- **Known Scripts** - CCC has built-in support for xUDT, Spore, NervosDAO and other system scripts
+**Checkpoint 8 - Find the Bitcoin Ghost (250 CKB reward)**  
+RGB++ isomorphic binding query on CKB mainnet. Every RGB++ cell encodes which Bitcoin UTXO owns it in 36 bytes of lock args: VOUT (4 bytes, little-endian) + TXID (32 bytes, little-endian). The task is to query mainnet, find a live cell, reverse the byte order, and submit the human-readable `txid:vout` pair.
 
-## Practical Progress
+This came directly from Week 11 of the builders track, where I wrote the query script that found 10 live mainnet cells and decoded each binding. The checkpoint makes someone else do that same work.
 
-### Simple Lock - Blocker
+Verification: re-encode the submitted `txid:vout` back into lock args, call `get_cells` on the CKB mainnet indexer with exact match, confirm at least one cell exists.
 
-- Cloned `simple-lock` project into `projects/simple-lock/`
-- Installed dependencies (`npm install`)
-- Installed `ckb-debugger v1.0.0` (required tool for compiling scripts)
-- Ran `npm run deploy` - failed with `Error: MemOutOfBound`
+## Technical Notes
 
-**Root cause:** Version incompatibility between `ckb-testtool@0.1.4` (which bundles a specific `ckb-js-vm` RISC-V binary) and the available `ckb-debugger` versions. The tutorial toolchain appears to have breaking changes that haven't been resolved in the example repo.
+**NervosDAO via CCC KnownScript**: Using `client.getKnownScript(ccc.KnownScript.NervosDao)` rather than hardcoding the code hash. The known script resolves to the right deployment per network without me maintaining constants.
 
-**Impact:** Could not compile or deploy the hash_lock script. The conceptual understanding of how custom Lock Scripts work was gained from reading the source code directly.
+**Spore type script**: Spore is not a CCC known script, so the code hash is hardcoded: `0x685a60219309029d01310311dba953d67029170ca4848a4ff638e57002130a0d`, hash_type `data1`. This is the official testnet deployment.
 
-### CCC Exploration
+**RGB++ lock args encoding**: The byte order is easy to get wrong. TXID is stored little-endian in the lock args, meaning the bytes are reversed from the human-readable big-endian TXID you see in a Bitcoin explorer. VOUT is also little-endian as a uint32. The verification re-encodes both before querying. If a user reverses correctly it matches; if they submit big-endian it won't find anything and the error message tells them to check byte order.
 
-- Visited CCC Playground at live.ckbccc.com
-- Reviewed CCC GitHub examples
-- Understood the signer/client architecture
+**Completion state**: The page was checking `completedCount === 5` as the finish condition. Updated to `completedCount === CHECKPOINTS.length` so it scales with future phases.
 
-## Screenshots
+## Deployment
 
-[Screenshots stored in /screenshots/week-05/]
+Deployed to production on Vercel. Build passed clean, zero errors.
 
-## Blockers / Questions
+## What's Next
 
-- simple-lock tutorial broken due to `ckb-debugger` / `ckb-js-vm` version mismatch — raised as a potential issue to flag with DevRel
-- Question: Is there a working version of the simple-lock tutorial with the current toolchain?
-
-## Plan for Next Week
-
-- CCC deep dive - study all SDK methods and examples in detail
-- Brainstorm 2-3 application ideas to discuss with Neon
-- Start thinking about app architecture
+- Get users through checkpoints 6-8 and see where they get stuck
+- Checkpoint 4/5 Fiber verification still needs a live node connected, same blocker across CKB Quest and Fiber-402
+- Consider Phase 3 once real user feedback comes in

@@ -1,128 +1,78 @@
-# Week 7 - Building the Airdrop App (Part 1)
+# Week 7 - Documents you can prove on CKB: shipping ckb-verification
 
-**Name:** David
-**Week Ending:** 2026-03-20
+**Name:** David Uhumagho
+**Week Ending:** 2026-06-05
+**Project:** ckb-verification
 
 ---
 
-## Courses / Material Completed
+## Current Progress
 
-- [x] Set up project scaffold for `projects/ckb-airdrop/` with Parcel, React, TypeScript
-- [x] Implemented `batchTransferCKB()` — multi-output CKB transfer in a single transaction
-- [x] Implemented `batchTokenAirdrop()` — multi-output xUDT token distribution
-- [x] Implemented `getTokenBalance()` — reading xUDT balance by scanning cells
-- [x] Built out `ccc-client.ts` with devnet/testnet/mainnet network switching
+- Shipped ckb-verification: writes a whole document onto CKB by splitting it across cells, and reads it back with a byte-for-byte integrity check
+- Chunked storage engine: a manifest cell plus one cell per chunk, written in one atomic signed transaction
+- Client-side AES-GCM encryption before chunking; the chain stores only ciphertext, the passphrase never leaves the browser
+- Documents are read from the creating transaction, so they stay readable even after the cells are spent
+- Builds clean and runs on testnet; JoyID and MetaMask both connect
 
 ## Key Learnings
 
-### Designing the transaction layer first
+- Storing the content on-chain (not just a hash) is where CKB actually differs: the cell model makes the document an owned on-chain object instead of a pointer to IPFS
+- AI parsing (MarkItDown, field extraction) can structure data but can never be the source of truth; trust has to come from an issuer signature on the cell
+- Permanence fights privacy head on, which is why encryption went into the very first version instead of being bolted on later
 
-One decision I made early was to write all the transaction logic in a plain TypeScript file (`transfer.ts`) completely separate from any UI code. No React, no hooks — just async functions that take inputs and return a tx hash. This made it much easier to reason about what was happening on-chain without UI state getting in the way.
+## Pending
 
-The separation turned out to be important. The blockchain logic has different failure modes than UI logic. If `batchTokenAirdrop()` throws, that's a CKB error — insufficient tokens, bad address, whatever. If a React state update fails, that's something else entirely. Keeping them separate meant I could think about each problem on its own terms.
+- Run the live signed multi-cell write end to end with a funded testnet wallet
+- Deploy to Vercel
+- Add the MarkItDown layer with an issuer-signature trust anchor
 
-### Building a multi-output transaction
+---
 
-CKB transactions work on the UTXO model — you consume existing cells as inputs and create new cells as outputs. For a batch transfer, you're creating one output cell per recipient, all in the same transaction. CCC makes this straightforward:
+## What I Shipped
 
-```typescript
-const outputs = await Promise.all(
-  recipients.map(async r => {
-    const { script: lock } = await ccc.Address.fromString(r.address, cccClient);
-    return { lock, capacity: ccc.fixedPointFrom(r.amount) };
-  }),
-);
+ckb-verification, a working app that writes a whole document onto Nervos CKB and reads it back with a byte-for-byte integrity check. It builds clean and runs on testnet.
 
-const tx = ccc.Transaction.from({ outputs, outputsData: recipients.map(() => '0x') });
-await tx.completeInputsByCapacity(signer);
-await tx.completeFeeBy(signer, 1000);
-return signer.sendTransaction(tx);
-```
+The starting point was the toy from the builders track. Back in Week 3 I wrote the smallest possible store-data-on-a-cell demo: type one line, it lands in the data field of a single cell, you read it back by transaction hash. The blockchain version of carving your initials into a tree. This week I made it hold something real.
 
-`completeInputsByCapacity` handles UTXO selection automatically — it picks enough of the sender's cells to cover all outputs plus fees. Without CCC this would be maybe 60 lines of manual cell querying and sorting.
+The engine is the part I care about. Text goes in, gets hashed, optionally encrypted in the browser, and split into byte-sized chunks. Each chunk becomes its own cell. A manifest cell records the title, the length, the chunk count, and the content hash. All of it is written in one signed transaction, so it is atomic: the whole document lands or none of it does. Reading walks the manifest, pulls each chunk by index, concatenates the bytes, decrypts if needed, and checks the hash. One cell cannot hold a book, so the book is made of cells.
 
-### The xUDT cell capacity problem
+Stack is the same as CKB Quest: Next.js 15, TypeScript, Tailwind, and @ckb-ccc for both the chain and the wallet. JoyID and MetaMask both connect on testnet. The interface is deliberately plain, white with black and one green. A document tool should look like a document tool, not a casino.
 
-Token cells on CKB are more expensive than plain CKB cells because they carry extra data. A standard secp256k1 lock cell is 61 bytes. An xUDT token cell has:
+## Why It Matters: certificates
 
-- 8 bytes: the capacity field itself
-- 53 bytes: lock script (secp256k1, 20-byte args)
-- 65 bytes: type script (xUDT, 32-byte args)
-- 16 bytes: token amount encoded as uint128
+Storing text for its own sake is boring. The use case with teeth is verifiable documents, certificates first of all. Diplomas, course completions, licenses. Things that are forged constantly and verified painfully, through phone calls and PDF attachments that anyone with an afternoon and a copy of Photoshop can fake. The plan is to take the original certificate, run it through Microsoft's MarkItDown to get clean canonical Markdown, and lock that content on CKB. Later anyone pulls the on-chain record and checks it against what they were handed. That parsing layer is next week. This week is the foundation it stands on.
 
-That's 142 bytes minimum = 142 CKB just to create the cell. I set `MIN_XUDT_CAPACITY` to 162 CKB to give headroom for recipients using different lock scripts with longer args (OmniLock, for example, has 42-byte args).
+## The Fork That Decided Everything
 
-This is a CKB-specific UX consideration that doesn't exist on account-based chains. When you airdrop tokens to someone, you're also paying ~162 CKB per recipient to fund their storage cell. That needs to be clearly communicated in the UI.
+There is exactly one decision that determines whether this is interesting or just noise: do you store a hash of the document, or the document itself.
 
-### Reading xUDT balances
+Storing a hash is notarization. It is old, it is commoditized, and every chain on earth does it. CKB has no edge there, and the market has spent a decade proving people barely pay for it.
 
-Token amounts are stored in the first 16 bytes of a cell's data field, encoded as a 128-bit little-endian unsigned integer. To read a wallet's token balance you iterate all of their cells filtered by the xUDT type script, decode each amount, and sum:
+Storing the content is where CKB is actually different. Most chains physically cannot hold a document, so they point at IPFS or Arweave and hope the file is still there in five years. The CKB cell model lets the content be the on-chain object, and an owned one, with a lock script and a real holder. That is the same argument Spore makes for digital objects, pointed at paperwork instead of pixel art. So: content on-chain, not a hash. That is the only version worth building, and it is what shipped.
 
-```typescript
-for await (const cell of cccClient.findCells({
-  script: addr.script,
-  scriptType: 'lock',
-  filter: { script: xudtType },
-  scriptSearchMode: 'exact',
-})) {
-  if (cell.outputData && cell.outputData.length >= 34) {
-    total += readUint128LE(cell.outputData);
-  }
-}
-```
+## The Three Hard Problems
 
-The `length >= 34` check is because the hex string includes the `0x` prefix (2 chars) plus 32 hex chars for 16 bytes. Cells with shorter data aren't valid xUDT cells.
+The engineering is the easy part. Three things are harder than the code, and I would rather name them now than discover them later.
 
-### Handling the token change output
+**Adoption is the moat, and the graveyard is full.** MIT shipped Blockcerts on Bitcoin in 2016. Dozens of blockchain diploma startups followed. The tech was never the blocker. Getting issuers to mint and employers to actually check is the entire game. Any honest version of this leads with a real issuer, not a clever data structure.
 
-If the sender has 1000 tokens and wants to send 750, the transaction consumes their entire token cell(s) as input and needs to create two outputs: 750 to the recipients and 250 back to the sender. Forgetting the change output means the remaining 250 tokens are simply destroyed — burned.
+**The AI cannot be the source of truth.** MarkItDown is roughly deterministic, but the moment you let a language model decide "the name is X, the date is Y," it can hallucinate, and then the canonical record is ambiguous, which is fatal for a verification tool. Trust has to come from an issuer signature, a known key on the cell. The AI is a convenience layer for structuring fields, never the authority.
 
-```typescript
-if (inputUdt > totalOut) {
-  tx.outputs.push(ccc.CellOutput.from({ lock: senderLock, type: xudtType, capacity: MIN_XUDT_CAPACITY }));
-  tx.outputsData.push(toHex(uint128LE(inputUdt - totalOut)));
-}
-```
+**Permanence fights privacy, head on.** Certificates carry personal data. An immutable public chain and a person's right to be forgotten cannot both win. The answer is to store encrypted content with the holder holding the key, or a commitment instead of plaintext. This is a real constraint, not a footnote, and the Nigerian market I keep coming back to has its own data law (NDPR) that makes it concrete. This is why encryption went into the very first version rather than being bolted on later.
 
-This is the same pattern as Bitcoin's change output — a concept I understood in theory from Week 1 but only really internalised when I had to implement it.
+## What I Built, and What Is Still Design
 
-### Network switching
+The architecture, marked by what actually runs today:
 
-The client is configured at startup via a `NETWORK` environment variable. Parcel bundles `process.env.NETWORK` at build time, so you can run:
+- **Storage (shipped):** a manifest cell plus chunk cells in one atomic transaction. The manifest holds the title, length, chunk count, and content hash. The reader keys off the chunk count, so a trailing change cell never confuses reassembly.
+- **Privacy (shipped):** content is encrypted client side with AES-GCM and a passphrase-derived key before chunking. The chain stores ciphertext. The passphrase never leaves the browser and is never stored.
+- **Permanence (shipped):** documents are read straight from the creating transaction, not from live cells, so they stay readable even after the cells are spent.
+- **Trust (next):** the cell signed by the issuer's key, with verification checking the signature, not an AI's opinion. The engine is ready for it; the issuer flow is not built yet.
+- **Economics:** capacity is a deposit, not a burn. The CKB locked to hold a document comes back when the cell is consumed. A few kilobytes of Markdown is a small, refundable amount, a far better story than "pay forever to store forever."
 
-```
-NETWORK=testnet npm start   # testnet
-NETWORK=devnet npm start    # local offckb node
-npm start                   # defaults to testnet
-```
+## What's Next
 
-The devnet client needs the system script addresses (`secp256k1`, `xUDT`, etc.) pointing at the local devnet deployment rather than the public ones. OffCKB publishes a `system-scripts.json` file with those addresses, which the client reads to configure itself.
-
-## Practical Progress
-
-### What's working
-
-- `batchTransferCKB()` tested successfully — sent CKB to 3 recipients in one transaction
-- `getTokenBalance()` reads xUDT balances correctly
-- `batchTokenAirdrop()` logic written and TypeScript types clean
-
-### What's next
-
-- Build the React UI on top of these functions
-- Test the token airdrop end-to-end on testnet with an actual xUDT token
-- CSV import for pasting recipient lists
-
-## Screenshots
-
-[Screenshots stored in /screenshots/week-07/]
-
-## Blockers / Questions
-
-No blockers this week. The xUDT capacity requirement (162 CKB per recipient) is something I'll want to surface clearly in the UI so users aren't surprised.
-
-## Plan for Next Week
-
-- Build all UI components
-- Test on testnet with real xUDT token from Week 4
-- Add CSV import and receipt export
-- Deploy to GitHub Pages or similar for the submission
+- Run the live signed write end to end with a funded testnet wallet. The build is verified and the dev server runs, but I have not signed a multi-cell write from the app yet, the same situation as CKB Quest Checkpoint 9.
+- Deploy to Vercel.
+- Add the MarkItDown layer: PDF and image to Markdown, then optional AI field extraction, with an issuer signature as the trust anchor so a certificate's authority comes from a key, not from a model's guess.
+- The working title Codex became ckb-verification.
