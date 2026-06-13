@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "write-and-read": "tsx scripts/write-and-read.ts"
   },
   "dependencies": {
     "@ckb-ccc/connector-react": "^1.0.34",
@@ -20,6 +21,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "tailwindcss": "^4.1.5",
+    "tsx": "^4.22.4",
     "typescript": "^5.7.2"
   }
 }
