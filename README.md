@@ -16,8 +16,6 @@ Every week gets a report: what shipped, key learnings, what is pending.
 - [Week 6 - CKB Quest Phase 3: The Quester, an on-chain identity](./weekly-reports/week-06.md)
 - [Week 7 - Documents you can prove on CKB: shipping ckb-verification](./weekly-reports/week-07.md)
 
-New entries follow [`weekly-reports/TEMPLATE.md`](./weekly-reports/TEMPLATE.md).
-
 ---
 
 ## Active Projects
@@ -56,7 +54,6 @@ ckb-playground/
   ckb-quest/          CKB Quest learn-to-earn game
   ckb-verification/   On-chain document storage and verification
   weekly-reports/     Weekly reports (current series)
-    archive-builders-track/   CKB builders track reports, Jan-Mar 2026
   screenshots/        Screenshots by week
   projects/           Earlier CKB work (builders track, 2026)
 ```
@@ -66,6 +63,6 @@ ckb-playground/
 <details>
 <summary>CKB Builders Track completed Jan-Mar 2026</summary>
 
-12-week programme on Nervos CKB. Covered the Cell model, Scripts, CKB-VM, xUDT tokens, Spore Protocol, Nervos DAO, RGB++ Protocol, and shipped a token airdrop app on testnet. Weekly reports in [`weekly-reports/archive-builders-track/`](./weekly-reports/archive-builders-track/).
+12-week programme on Nervos CKB. Covered the Cell model, Scripts, CKB-VM, xUDT tokens, Spore Protocol, Nervos DAO, RGB++ Protocol, and shipped a token airdrop app on testnet.
 
 </details>

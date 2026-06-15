@@ -3,3 +3,8 @@ node_modules/
 .parcel-cache/
 dist/
 notes/
+.vercel
+
+# Weekly-report scaffolding kept local only, not published
+weekly-reports/TEMPLATE.md
+weekly-reports/archive-builders-track/
