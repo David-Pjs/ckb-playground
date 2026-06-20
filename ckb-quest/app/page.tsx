@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, Fragment } from "react";
 import { useCcc } from "@ckb-ccc/connector-react";
 import { ccc } from "@ckb-ccc/core";
 import { createSpore } from "@ckb-ccc/spore";
-import { CHECKPOINTS, type Checkpoint } from "@/lib/checkpoints";
+import { CHECKPOINTS, REQUIRED_CHECKPOINTS, type Checkpoint } from "@/lib/checkpoints";
 import { avatarSvg } from "@/lib/avatar";
 import { Avatar } from "./Avatar";
 import { QuesterCard } from "./QuesterCard";
@@ -43,14 +43,27 @@ function saveProgress(progress: Record<number, CheckpointState>) {
 
 function computeStates(saved: Record<number, CheckpointState>): Record<number, CheckpointState> {
   const states: Record<number, CheckpointState> = {};
-  let firstIncomplete = -1;
+
+  // Required checkpoints form the spine and unlock linearly. Optional ones (Fiber) are a
+  // bonus: attemptable once the required work before them is done, but they never lock the
+  // checkpoints that follow. This is what keeps the back half of the quest reachable while
+  // the Fiber node is offline; previously an un-completable Fiber checkpoint stranded the
+  // rest of the quest behind it.
+  const firstIncompleteRequiredId =
+    CHECKPOINTS.find((cp) => !cp.optional && saved[cp.id]?.status !== "complete")?.id ?? -1;
 
   for (const cp of CHECKPOINTS) {
     if (saved[cp.id]?.status === "complete") {
       states[cp.id] = saved[cp.id];
+      continue;
+    }
+    if (cp.optional) {
+      const blockedByRequired = CHECKPOINTS.some(
+        (p) => !p.optional && p.id < cp.id && saved[p.id]?.status !== "complete",
+      );
+      states[cp.id] = { status: blockedByRequired ? "locked" : "active" };
     } else {
-      if (firstIncomplete === -1) firstIncomplete = cp.id;
-      states[cp.id] = { status: cp.id === firstIncomplete ? "active" : "locked" };
+      states[cp.id] = { status: cp.id === firstIncompleteRequiredId ? "active" : "locked" };
     }
   }
 
@@ -82,8 +95,15 @@ export default function QuestPage() {
     signer.getRecommendedAddress().then(setAddress).catch(() => setAddress(null));
   }, [signer]);
 
+  // Fiber checkpoints stay in "coming soon" until a live node is wired up. Flip
+  // NEXT_PUBLIC_FIBER_ENABLED to "true" alongside the server-side FIBER_NODE_RPC_URL.
+  const fiberEnabled = process.env.NEXT_PUBLIC_FIBER_ENABLED === "true";
+
   const completedCount = Object.values(progress).filter((s) => s.status === "complete").length;
   const totalEarned = CHECKPOINTS.filter((c) => progress[c.id]?.status === "complete").reduce((sum, c) => sum + c.reward, 0);
+
+  // The quest is finished when every required checkpoint is done; the Fiber bonus is extra.
+  const requiredComplete = REQUIRED_CHECKPOINTS.every((c) => progress[c.id]?.status === "complete");
 
   const handleVerify = useCallback(async (checkpoint: Checkpoint, input: string) => {
     if (!address) return;
@@ -292,13 +312,14 @@ export default function QuestPage() {
                 minting={minting}
                 mintError={mintError}
                 questerSporeId={questerSporeId}
+                fiberEnabled={fiberEnabled}
               />
             );
           })}
         </div>
 
         {/* Footer */}
-        {completedCount === CHECKPOINTS.length && address && (
+        {requiredComplete && address && (
           <>
             <div style={{
               marginTop: "64px",
@@ -314,7 +335,7 @@ export default function QuestPage() {
                 color: "var(--color-green)",
                 marginBottom: "8px",
               }}>
-                All {CHECKPOINTS.length} checkpoints complete.
+                Quest complete.
               </p>
               <p style={{ color: "var(--color-muted)", fontSize: "14px" }}>
                 You sent real transactions. Locked CKB in the DAO. Minted permanent on-chain content.<br />
@@ -350,6 +371,7 @@ function CheckpointCard({
   minting,
   mintError,
   questerSporeId,
+  fiberEnabled,
 }: {
   checkpoint: Checkpoint;
   state: CheckpointState;
@@ -361,6 +383,7 @@ function CheckpointCard({
   minting: boolean;
   mintError: string | null;
   questerSporeId: string | null;
+  fiberEnabled: boolean;
 }) {
   const [input, setInput] = useState("");
   const isLocked = state.status === "locked";
@@ -434,7 +457,7 @@ function CheckpointCard({
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "16px", marginBottom: "28px" }}>
         <div>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: "11px", color: "var(--color-muted)", marginBottom: "6px" }}>
-            {hexId} · active
+            {hexId} · {checkpoint.optional ? "optional" : "active"}
           </div>
           <h2 style={{
             fontFamily: "var(--font-display)",
@@ -603,6 +626,29 @@ function CheckpointCard({
             >
               Connect Wallet
             </button>
+          </div>
+        ) : checkpoint.optional && !fiberEnabled ? (
+          <div style={{
+            backgroundColor: "var(--color-amber-bg)",
+            border: "1px solid color-mix(in srgb, var(--color-amber) 25%, transparent)",
+            borderRadius: "8px",
+            padding: "20px",
+          }}>
+            <div style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "10px",
+              color: "var(--color-amber)",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              marginBottom: "10px",
+            }}>
+              Optional · coming soon
+            </div>
+            <p style={{ fontSize: "14px", color: "var(--color-ink)", lineHeight: 1.6 }}>
+              This checkpoint needs a live Fiber node, which the quest is still standing up.
+              It is a bonus, not a gate: the rest of the quest stays open and you can finish
+              and earn the full required reward without it. Check back once Fiber is wired up.
+            </p>
           </div>
         ) : (
           <div>

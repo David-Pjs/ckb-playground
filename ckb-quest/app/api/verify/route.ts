@@ -10,10 +10,13 @@ import {
   verifyRgbppBinding,
   verifyQuester,
   sendReward,
+  alreadyRewarded,
 } from "@/lib/ckb";
 import { CHECKPOINTS } from "@/lib/checkpoints";
 
-// In-memory claim tracker resets on redeploy (fine for testnet v1)
+// Fast in-deploy cache so repeated verifies of the same checkpoint don't re-scan the chain.
+// It is only a cache: the authoritative "already paid?" check is alreadyRewarded(), which
+// reads the chain, so a redeploy clearing this Map can never cause a double payout.
 const claimed = new Map<string, Set<number>>();
 
 function hasClaimed(address: string, checkpointId: number) {
@@ -76,15 +79,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: result.error, balance: result.balance });
   }
 
-  // Send reward (once per address per checkpoint)
+  // Send reward, once per address per checkpoint. The chain is the source of truth: if a
+  // tagged reward for this checkpoint already exists on-chain, we never pay again.
   let rewardTxHash: string | null = null;
   if (!hasClaimed(address, checkpointId)) {
     try {
-      const { txHash } = await sendReward(address, checkpoint.reward);
-      rewardTxHash = txHash;
-      markClaimed(address, checkpointId);
+      const paidBefore = await alreadyRewarded(address, checkpointId, checkpoint.reward);
+      if (paidBefore) {
+        markClaimed(address, checkpointId);
+      } else {
+        const { txHash } = await sendReward(address, checkpoint.reward, checkpointId);
+        rewardTxHash = txHash;
+        markClaimed(address, checkpointId);
+      }
     } catch (e) {
-      // Don't fail verification if reward send fails log and continue
+      // Don't fail verification if the reward send fails; leave it unmarked so a later
+      // verify can retry the payout.
       console.error("Reward send failed:", e);
     }
   }
