@@ -17,6 +17,10 @@ export interface Checkpoint {
   inputPlaceholder: string;
   inputType: "address" | "txHash" | "typeScriptHash" | "channelId" | "paymentHash" | "sporeId" | "btcBinding" | "quester";
   verifyHint: string;
+  // Optional (bonus) checkpoints never block the required spine. The Fiber checkpoints
+  // are optional because they depend on a live Fiber node the quest server does not run
+  // yet; marking them optional keeps the rest of the quest reachable in the meantime.
+  optional?: boolean;
 }
 
 export const CHECKPOINTS: Checkpoint[] = [
@@ -25,7 +29,9 @@ export const CHECKPOINTS: Checkpoint[] = [
     slug: "get-on-chain",
     title: "Get On-Chain",
     subtitle: "Connect your wallet and get testnet CKB",
-    reward: 50,
+    // Must clear the cell-capacity floor: a reward output below ~61 CKB (the occupied
+    // capacity of a standard lock) cannot form a valid cell, so the payout would fail.
+    reward: 100,
     concept: `CKB is a blockchain where every piece of state lives in a Cell.
 A Cell is like a box that holds both CKBytes (the native token) and arbitrary data.
 Every cell requires a minimum of 61 CKBytes to exist that 61 CKB is not a fee,
@@ -151,6 +157,7 @@ Airdropping 100 tokens to 10 people = ~1,620 CKB minimum just in capacity costs.
     title: "Fiber First Contact",
     subtitle: "Run a node. Open a channel. Touch the Lightning.",
     reward: 200,
+    optional: true,
     concept: `Fiber is CKB's payment channel network like Bitcoin's Lightning Network
 but supporting multiple assets (CKB, RGB++ tokens, stablecoins) and using PTLCs
 instead of HTLCs for better security.
@@ -206,6 +213,7 @@ most developers. This checkpoint walks you through it.`,
     title: "Pay for Something Real",
     subtitle: "Use your channel to pay the Fiber-402 API",
     reward: 300,
+    optional: true,
     concept: `HTTP 402 Payment Required is a status code from 1996 that was reserved
 for future use specifically, for micropayment systems. Fiber makes it finally practical.
 
@@ -424,5 +432,9 @@ priced honestly in the space it takes.`,
     verifyHint: "Verified on-chain: the Spore's content must be the exact avatar generated for your address.",
   },
 ];
+
+// The required spine: every non-optional checkpoint. Completion of the quest is defined
+// over these, so the Fiber bonus checkpoints can stay offline without stranding finishers.
+export const REQUIRED_CHECKPOINTS = CHECKPOINTS.filter((c) => !c.optional);
 
 export const TOTAL_REWARD = CHECKPOINTS.reduce((sum, c) => sum + c.reward, 0);

@@ -317,9 +317,58 @@ export async function verifyQuester(sporeId: string, address: string): Promise<{
   }
 }
 
-// Reward: send CKB from house wallet
+// Reward: send CKB from house wallet, idempotently.
+//
+// Rewards are paid as on-chain transactions, so the chain itself is the durable record of
+// what we have already paid. We do not trust server memory for that (it resets on every
+// redeploy, which would let an address re-claim from the funded wallet). Instead every
+// reward output is tagged at shannon precision with its checkpoint id, making a paid reward
+// a uniquely identifiable cell we can look up before paying again.
 
-export async function sendReward(toAddress: string, amountCKB: number): Promise<{ txHash: string }> {
+const MIN_CELL_CKB = BigInt(61); // occupied capacity of a standard secp256k1 lock cell
+const REWARD_CELL_SCAN_LIMIT = 150;
+const REWARD_TX_SCAN_LIMIT = 50;
+
+// base CKB in the high digits, checkpoint id in the low shannons => collision-free per checkpoint
+export function rewardCapacity(amountCKB: number, checkpointId: number): bigint {
+  return ccc.fixedPointFrom(amountCKB.toString()) + BigInt(checkpointId);
+}
+
+// Has the house wallet already paid this exact checkpoint reward to this address?
+// Checks the live wallet first (the reward usually sits unspent), then falls back to the
+// address's receipt history in case the reward cell was already spent or consolidated.
+export async function alreadyRewarded(
+  toAddress: string,
+  checkpointId: number,
+  amountCKB: number,
+): Promise<boolean> {
+  const client = getClient();
+  const { script: toLock } = await ccc.Address.fromString(toAddress, client);
+  const tagged = rewardCapacity(amountCKB, checkpointId);
+
+  let cellsScanned = 0;
+  for await (const cell of client.findCellsByLock(toLock, null, false)) {
+    if (cell.cellOutput.capacity === tagged) return true;
+    if (++cellsScanned >= REWARD_CELL_SCAN_LIMIT) break;
+  }
+
+  let txScanned = 0;
+  for await (const record of client.findTransactionsByLock(toLock, null, false, "desc")) {
+    if (record.isInput) continue; // only outputs received by this lock are reward receipts
+    if (++txScanned > REWARD_TX_SCAN_LIMIT) break;
+    const txWithStatus = await client.getTransaction(record.txHash);
+    const out = txWithStatus?.transaction.outputs[Number(record.cellIndex)];
+    if (out && out.capacity === tagged) return true;
+  }
+
+  return false;
+}
+
+export async function sendReward(
+  toAddress: string,
+  amountCKB: number,
+  checkpointId: number,
+): Promise<{ txHash: string }> {
   const privateKey = process.env.HOUSE_PRIVATE_KEY;
   if (!privateKey) throw new Error("HOUSE_PRIVATE_KEY not configured");
 
@@ -327,8 +376,15 @@ export async function sendReward(toAddress: string, amountCKB: number): Promise<
   const signer = new ccc.SignerCkbPrivateKey(client, privateKey);
   const { script: toLock } = await ccc.Address.fromString(toAddress, client);
 
+  const capacity = rewardCapacity(amountCKB, checkpointId);
+  // A cell cannot hold less than its occupied capacity. Fail loudly on a misconfigured
+  // sub-floor reward instead of silently dropping the payout cell.
+  if (capacity < MIN_CELL_CKB * SHANNONS_PER_CKB) {
+    throw new Error(`Reward of ${amountCKB} CKB is below the ${MIN_CELL_CKB} CKB cell-capacity floor`);
+  }
+
   const tx = ccc.Transaction.from({
-    outputs: [{ lock: toLock, capacity: ccc.fixedPointFrom(amountCKB.toString()) }],
+    outputs: [{ lock: toLock, capacity }],
     outputsData: ["0x"],
   });
 
