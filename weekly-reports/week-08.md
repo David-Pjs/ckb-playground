@@ -15,10 +15,6 @@
 - Fixed a Tailwind v4 layout bug where an unlayered CSS reset was silently overriding every margin and padding utility in the app
 - Standardised every weekly report to one format: Current Progress, Key Learnings, Pending, then the deep dive
 
-## Screenshots
-
-![Proof run: document written to testnet, confirmed, read back, integrity verified](../screenshots/week-08/on-chain-proof-run.png)
-
 ## Key Learnings
 
 - "Builds clean" and "works on chain" are different claims, and only the second one matters. The engine had passed a build for two weeks without a single document ever landing on testnet. Writing a headless proof forced the real thing to happen
