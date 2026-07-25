@@ -20,7 +20,7 @@
 
 ## Pending
 
-- The local Windows production build never finished a clean run: it crashed once under the edge runtime (fixed), then was still hitting unexplained retries during static generation when this was pushed. Code compiled and typechecked, but a full `next build` pass has not actually been confirmed locally
+- Local production build is now confirmed clean (8/8 static pages, `/api/og` and `/share` both compiling as dynamic routes) after the edge-runtime fix, though the build worker still needed a couple of retries to get there, flaky rather than broken
 - Live check once deployed: mint a Quester with a real wallet, hit `/share` with the resulting params, and confirm the unfurl actually renders on X/Discord
 
 ---
