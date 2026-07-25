@@ -162,7 +162,14 @@ export function QuesterCard({
   }, [address, cleared, total, earned, sporeId]);
 
   const shareText = `I finished CKB Quest: ${cleared} on-chain checkpoints on CKB. Sent real transactions, locked CKB in the Nervos DAO, decoded an RGB++ binding, and minted my identity as a Spore. My Quester lives on-chain.`;
-  const shareUrl = `https://${SITE}`;
+  const shareParams = new URLSearchParams({
+    address,
+    cleared: String(cleared),
+    total: String(total),
+    earned: String(earned),
+  });
+  if (sporeId) shareParams.set("sporeId", sporeId);
+  const shareUrl = `https://${SITE}/share?${shareParams.toString()}`;
   const xHref = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
 
   return (
