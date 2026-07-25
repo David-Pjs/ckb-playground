@@ -21,7 +21,7 @@
 ## Pending
 
 - The local Windows production build never finished a clean run: it crashed once under the edge runtime (fixed), then was still hitting unexplained retries during static generation when this was pushed. Code compiled and typechecked, but a full `next build` pass has not actually been confirmed locally
-- Confirm the build is green on Vercel's next deploy, then do a live check: mint a Quester with a real wallet, hit `/share` with the resulting params, and confirm the unfurl actually renders on X/Discord
+- Live check once deployed: mint a Quester with a real wallet, hit `/share` with the resulting params, and confirm the unfurl actually renders on X/Discord
 
 ---
 
