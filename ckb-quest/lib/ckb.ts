@@ -126,6 +126,9 @@ export async function verifyFiberChannel(channelId: string): Promise<{ ok: boole
 
     return { ok: true };
   } catch (e) {
+    if (e instanceof Error && e.name === "TimeoutError") {
+      return { ok: false, error: "Fiber node did not respond within 5s. It may be cold-starting, wait a moment and try again." };
+    }
     return { ok: false, error: `Could not reach Fiber node: ${String(e)}` };
   }
 }
@@ -151,6 +154,9 @@ export async function verifyFiberPayment(paymentHash: string): Promise<{ ok: boo
 
     return { ok: true };
   } catch (e) {
+    if (e instanceof Error && e.name === "TimeoutError") {
+      return { ok: false, error: "Fiber node did not respond within 5s. It may be cold-starting, wait a moment and try again." };
+    }
     return { ok: false, error: `Could not verify payment: ${String(e)}` };
   }
 }

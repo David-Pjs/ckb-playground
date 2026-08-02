@@ -113,12 +113,34 @@ export default function QuestPage() {
       [checkpoint.id]: { loading: true },
     }));
 
-    const res = await fetch("/api/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ checkpointId: checkpoint.id, input, address }),
-    });
-    const data = await res.json();
+    let data: { ok: boolean; error?: string; rewardTxHash?: string; reward?: number };
+    try {
+      const res = await fetch("/api/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ checkpointId: checkpoint.id, input, address }),
+        // The server-side Fiber RPC call has its own 5s timeout, but the reward-send step
+        // that runs after a successful verify has none. Without a client-side cap here, a
+        // stalled server call leaves the button on "Verifying…" forever with no way back.
+        signal: AbortSignal.timeout(20_000),
+      });
+      data = await res.json();
+    } catch (e) {
+      const timedOut = e instanceof Error && e.name === "TimeoutError";
+      setVerifyStates((prev) => ({
+        ...prev,
+        [checkpoint.id]: {
+          loading: false,
+          result: {
+            ok: false,
+            error: timedOut
+              ? "Verification is taking too long and timed out. This usually means the node it checks against is slow or unreachable, wait a moment and try again."
+              : "Could not reach the quest server. Check your connection and try again.",
+          },
+        },
+      }));
+      return;
+    }
 
     setVerifyStates((prev) => ({
       ...prev,
