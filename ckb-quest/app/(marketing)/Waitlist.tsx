@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 
-type State = "idle" | "sending" | "done" | "error";
+import { WAITLIST_LEVELS } from "@/lib/waitlist";
 
-const LEVELS = ["New to blockchain", "Some blockchain", "Already on CKB"];
+type State = "idle" | "sending" | "done" | "error";
 
 export default function Waitlist() {
   const [email, setEmail] = useState("");
@@ -52,9 +52,7 @@ export default function Waitlist() {
           takes about four minutes.
         </p>
         <a
-          href="https://ckb-quest.vercel.app/"
-          target="_blank"
-          rel="noreferrer"
+          href="/quest"
           className="mt-7 inline-block border border-rule px-5 py-3 font-mono text-xs uppercase tracking-[0.18em] transition-colors hover:border-accent hover:text-accent"
         >
           Start the first task →
@@ -86,7 +84,7 @@ export default function Waitlist() {
 
       <fieldset className="flex flex-wrap gap-2">
         <legend className="sr-only">Where you are starting from</legend>
-        {LEVELS.map((label) => (
+        {WAITLIST_LEVELS.map((label) => (
           <button
             key={label}
             type="button"

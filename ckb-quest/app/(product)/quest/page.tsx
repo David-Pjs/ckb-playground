@@ -6,8 +6,8 @@ import { ccc } from "@ckb-ccc/core";
 import { createSpore } from "@ckb-ccc/spore";
 import { CHECKPOINTS, REQUIRED_CHECKPOINTS, type Checkpoint } from "@/lib/checkpoints";
 import { avatarSvg } from "@/lib/avatar";
-import { Avatar } from "./Avatar";
-import { QuesterCard } from "./QuesterCard";
+import { Avatar } from "../Avatar";
+import { QuesterCard } from "../QuesterCard";
 
 const QUESTER_KEY = "ckb-quest-quester-spore";
 

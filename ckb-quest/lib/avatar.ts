@@ -6,6 +6,13 @@
 
 const PALETTE = ["#1a1916", "#16773d", "#b52319", "#976512"]; // ink, green, red, amber
 
+// The same four hues lifted for a near-black ground. The marketing page draws
+// Questers on #08080a, where the paper-ground palette is unreadable. Only the
+// hues change: the index is drawn from the same PRNG call, so a given address
+// gets the same shape and the same slot in both palettes. Never use this for
+// anything that gets minted or verified — avatarSvg is the on-chain truth.
+export const DARK_GROUND_PALETTE = ["#edeae2", "#2fae5a", "#d93a2b", "#c98a1e"];
+
 const GRID = 7; // 7x7, mirrored across the vertical axis
 
 // FNV-1a 32-bit hash of the address string.
@@ -35,9 +42,12 @@ export interface AvatarSpec {
   cells: boolean[][]; // [row][col]
 }
 
-export function avatarSpec(address: string): AvatarSpec {
+export function avatarSpec(
+  address: string,
+  palette: readonly string[] = PALETTE,
+): AvatarSpec {
   const rand = mulberry32(hashString(address));
-  const color = PALETTE[Math.floor(rand() * PALETTE.length)];
+  const color = palette[Math.floor(rand() * palette.length)];
 
   const half = Math.ceil(GRID / 2); // 4 columns generated, mirrored to the right
   const cells: boolean[][] = [];

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { questerSpec } from "@/lib/quester";
+import { avatarSpec, DARK_GROUND_PALETTE } from "@/lib/avatar";
 
 // Seeds picked only so the reel opens green and walks the whole palette.
 // Colour and shape are whatever the real algorithm returns for each string.
@@ -140,7 +140,7 @@ export default function Quester() {
     };
   }, []);
 
-  const spec = useMemo(() => questerSpec(SEEDS[i]), [i]);
+  const spec = useMemo(() => avatarSpec(SEEDS[i], DARK_GROUND_PALETTE), [i]);
   const span = GRID * S;
 
   const slots = [];

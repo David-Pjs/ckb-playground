@@ -1,14 +1,10 @@
 import { neon } from "@neondatabase/serverless";
 
+import { isWaitlistLevel } from "@/lib/waitlist";
+
 export const runtime = "nodejs";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const LEVELS = new Set([
-  "",
-  "Never touched a blockchain",
-  "Some web3",
-  "Already build on-chain",
-]);
 
 function db() {
   const url = process.env.DATABASE_URL;
@@ -42,7 +38,7 @@ export async function POST(req: Request) {
   }
 
   const email = (body.email ?? "").trim().toLowerCase();
-  const level = LEVELS.has(body.level ?? "") ? (body.level ?? "") : "";
+  const level = isWaitlistLevel(body.level ?? "") ? (body.level ?? "") : "";
   const source = (body.source ?? "landing").slice(0, 64);
   const referrer = (req.headers.get("referer") ?? "").slice(0, 512);
 

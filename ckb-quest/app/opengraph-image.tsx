@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
-import { questerSpec } from "@/lib/quester";
-import { MARK_SEED } from "./Mark";
+import { avatarSpec, DARK_GROUND_PALETTE } from "@/lib/avatar";
+import { MARK_SEED } from "@/lib/mark";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -11,7 +11,7 @@ export const alt =
 // Telegram where the page itself never loads. Kept mostly typographic and
 // mostly mark, because custom fonts in OG images are a reliability tax.
 export default function OG() {
-  const { grid, color, cells } = questerSpec(MARK_SEED);
+  const { grid, color, cells } = avatarSpec(MARK_SEED, DARK_GROUND_PALETTE);
   const unit = 34;
   const board = grid * unit;
 

@@ -438,3 +438,35 @@ priced honestly in the space it takes.`,
 export const REQUIRED_CHECKPOINTS = CHECKPOINTS.filter((c) => !c.optional);
 
 export const TOTAL_REWARD = CHECKPOINTS.reduce((sum, c) => sum + c.reward, 0);
+
+// ─── Presentation helpers, used by the landing page ───────────────────────────
+// The marketing page used to carry its own trimmed copy of this list, which
+// meant the pitch could quote rewards the product does not actually pay. It now
+// counts the same array the quest runs on, so the two cannot disagree.
+
+export const hex = (n: number) => `0x${n.toString(16).padStart(2, "0")}`;
+
+export const COUNT = CHECKPOINTS.length;
+
+const WORDS = [
+  "zero",
+  "one",
+  "two",
+  "three",
+  "four",
+  "five",
+  "six",
+  "seven",
+  "eight",
+  "nine",
+  "ten",
+  "eleven",
+  "twelve",
+];
+
+export const countWord = (n: number = COUNT) => WORDS[n] ?? String(n);
+
+export const Count = (n: number = COUNT) => {
+  const w = countWord(n);
+  return w.charAt(0).toUpperCase() + w.slice(1);
+};

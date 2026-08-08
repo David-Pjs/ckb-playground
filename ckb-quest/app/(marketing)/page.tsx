@@ -6,7 +6,9 @@ import Mark from "./Mark";
 import Waitlist from "./Waitlist";
 import { TOTAL_REWARD } from "@/lib/checkpoints";
 
-const APP = "https://ckb-quest.vercel.app/";
+// The product now lives in the same app, one route over. Internal link, no
+// new tab: starting the quest is the same visit, not a departure.
+const APP = "/quest";
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
@@ -61,8 +63,6 @@ export default function Home() {
             <div className="mt-11">
               <a
                 href={APP}
-                target="_blank"
-                rel="noreferrer"
                 className="inline-block bg-accent px-8 py-4 font-mono text-xs uppercase tracking-[0.18em] text-[#08080a] transition-opacity hover:opacity-85"
               >
                 Start the first task
@@ -191,8 +191,6 @@ export default function Home() {
               <div className="mt-9">
                 <a
                   href={APP}
-                  target="_blank"
-                  rel="noreferrer"
                   className="inline-block bg-accent px-8 py-4 font-mono text-xs uppercase tracking-[0.18em] text-[#08080a] transition-opacity hover:opacity-85"
                 >
                   Start the first task
@@ -307,8 +305,6 @@ export default function Home() {
             </a>
             <a
               href={APP}
-              target="_blank"
-              rel="noreferrer"
               className="font-mono text-[11px] text-dim transition-colors hover:text-accent"
             >
               Launch

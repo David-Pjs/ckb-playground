@@ -1,12 +1,12 @@
 import { ImageResponse } from "next/og";
-import { questerSpec } from "@/lib/quester";
-import { MARK_SEED } from "./Mark";
+import { avatarSpec, DARK_GROUND_PALETTE } from "@/lib/avatar";
+import { MARK_SEED } from "@/lib/mark";
 
 export const size = { width: 64, height: 64 };
 export const contentType = "image/png";
 
 export default function Icon() {
-  const { grid, color, cells } = questerSpec(MARK_SEED);
+  const { grid, color, cells } = avatarSpec(MARK_SEED, DARK_GROUND_PALETTE);
   const pad = 6;
   const unit = (size.width - pad * 2) / grid;
 

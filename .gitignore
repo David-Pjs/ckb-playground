@@ -8,3 +8,6 @@ notes/
 # Weekly-report scaffolding kept local only, not published
 weekly-reports/TEMPLATE.md
 weekly-reports/archive-builders-track/
+
+# vendored design plugin, tooling not project source
+.design-arsenal/
