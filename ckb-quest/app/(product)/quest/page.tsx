@@ -6,6 +6,7 @@ import { ccc } from "@ckb-ccc/core";
 import { createSpore } from "@ckb-ccc/spore";
 import { CHECKPOINTS, REQUIRED_CHECKPOINTS, type Checkpoint } from "@/lib/checkpoints";
 import { avatarSvg } from "@/lib/avatar";
+import Mark from "@/components/Mark";
 import { Avatar } from "../Avatar";
 import { QuesterCard } from "../QuesterCard";
 
@@ -214,17 +215,23 @@ export default function QuestPage() {
         <header style={{ marginBottom: "48px" }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
             <div>
-              <h1 style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "32px",
-                fontWeight: 700,
-                lineHeight: 1.1,
-                letterSpacing: "-0.02em",
-                color: "var(--color-ink)",
-                marginBottom: "6px",
-              }}>
-                CKB Quest
-              </h1>
+              {/* The same mark the landing page wears, in the paper palette.
+                  The two rooms are allowed to disagree about everything else;
+                  this is what says you are still in the same place. */}
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
+                <Mark size={26} />
+                <h1 style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: "32px",
+                  fontWeight: 700,
+                  lineHeight: 1.1,
+                  letterSpacing: "-0.02em",
+                  color: "var(--color-ink)",
+                  margin: 0,
+                }}>
+                  CKB Quest
+                </h1>
+              </div>
               <p style={{ color: "var(--color-muted)", fontSize: "14px" }}>
                 {CHECKPOINTS.length} checkpoints · real transactions · no shortcuts
               </p>

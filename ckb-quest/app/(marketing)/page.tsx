@@ -2,8 +2,9 @@ import Lattice from "./Lattice";
 import Quester from "./Quester";
 import Checkpoints from "./Checkpoints";
 import CellAnatomy from "./CellAnatomy";
-import Mark from "./Mark";
+import Mark from "@/components/Mark";
 import Waitlist from "./Waitlist";
+import { DARK_GROUND_PALETTE } from "@/lib/avatar";
 import { TOTAL_REWARD } from "@/lib/checkpoints";
 
 // The product now lives in the same app, one route over. Internal link, no
@@ -27,7 +28,7 @@ export default function Home() {
       <main id="page" className="mx-auto w-full max-w-5xl px-6 sm:px-10">
         <header className="flex items-center justify-between gap-6 py-7">
           <span className="flex items-center gap-3">
-            <Mark size={24} />
+            <Mark size={24} palette={DARK_GROUND_PALETTE} />
             <span className="font-display text-2xl leading-none tracking-tight">
               CKB Quest
             </span>
