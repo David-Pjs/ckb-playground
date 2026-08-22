@@ -7,3 +7,6 @@ out/
 
 # build artifact
 *.tsbuildinfo
+
+.env*
+!.env.example
