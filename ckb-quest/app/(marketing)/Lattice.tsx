@@ -36,6 +36,9 @@ export default function Lattice() {
     let writtenAt = new Float64Array(0);
     let fill = 0;
     let raf = 0;
+    // true while any cell is still inside its write flash, so the loop knows
+    // it cannot stop yet even once fill has settled
+    let hasHot = false;
 
     function layout() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -70,8 +73,17 @@ export default function Lattice() {
       }
     }
 
+    // scrollHeight forces a synchronous layout. Reading it per frame made the
+    // rAF loop reflow the whole document 60x a second, which starved the main
+    // thread on a long page. Measure it on layout changes instead; scrollY is
+    // cheap and is the only thing that actually moves between frames.
+    let span = 0;
+
+    function measure() {
+      span = document.documentElement.scrollHeight - window.innerHeight;
+    }
+
     function progress() {
-      const span = document.documentElement.scrollHeight - window.innerHeight;
       return span <= 0 ? 0 : Math.min(1, Math.max(0, window.scrollY / span));
     }
 
@@ -139,39 +151,78 @@ export default function Lattice() {
         );
       }
 
+      hasHot = hotCount > 0;
       ctx!.globalAlpha = 1;
     }
 
-    // Repainting is driven off scroll as well as rAF, so a throttled or paused
-    // animation frame can never leave the canvas showing a stale state.
+    function frame(now: number) {
+      const target = progress();
+      fill += (target - fill) * 0.085;
+      draw(now);
+      // Settled and nothing still flashing: stop burning frames. A scroll or a
+      // resize starts the loop again, so the canvas can never show stale state.
+      if (Math.abs(target - fill) < 0.0005 && !hasHot) {
+        fill = target;
+        raf = 0;
+        return;
+      }
+      raf = requestAnimationFrame(frame);
+    }
+
+    function start() {
+      // Reduced motion gets the settled state directly, with no loop at all.
+      if (reduce) {
+        fill = progress();
+        draw(performance.now());
+        return;
+      }
+      if (raf === 0 && !document.hidden) raf = requestAnimationFrame(frame);
+    }
+
     function sync() {
       fill = progress();
       draw(performance.now());
     }
 
-    function frame(now: number) {
-      const target = progress();
-      fill += (target - fill) * (reduce ? 1 : 0.085);
-      draw(now);
-      raf = requestAnimationFrame(frame);
-    }
-
     layout();
+    measure();
     sync();
-    raf = requestAnimationFrame(frame);
+    start();
 
-    const onScroll = () => sync();
+    const onScroll = () => start();
     const onResize = () => {
       layout();
+      measure();
       sync();
+      start();
     };
+    // The document gets taller as fonts and images settle, so the scroll span
+    // has to be re-measured rather than trusted from first paint.
+    const ro = new ResizeObserver(() => {
+      measure();
+      start();
+    });
+    ro.observe(document.documentElement);
+
+    const onVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      } else {
+        start();
+      }
+    };
+
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
+    document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
       cancelAnimationFrame(raf);
+      ro.disconnect();
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 

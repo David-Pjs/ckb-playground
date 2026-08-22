@@ -34,7 +34,7 @@ export const CHECKPOINTS: Checkpoint[] = [
     reward: 100,
     concept: `CKB is a blockchain where every piece of state lives in a Cell.
 A Cell is like a box that holds both CKBytes (the native token) and arbitrary data.
-Every cell requires a minimum of 61 CKBytes to exist that 61 CKB is not a fee,
+Every cell requires a minimum of 61 CKBytes to exist. That 61 CKB is not a fee,
 it's the on-chain storage cost of the cell itself. 1 CKByte = 1 byte of on-chain storage.
 
 This is fundamentally different from Ethereum, where you pay gas once and state
@@ -50,7 +50,7 @@ persists forever. On CKB, your cells occupy space, and that space is priced in C
       {
         text: "Go to the testnet faucet and claim CKB.",
         link: { label: "faucet.nervos.org", url: "https://faucet.nervos.org" },
-        windowsNote: "Open this link in any browser no special setup needed on Windows.",
+        windowsNote: "Open this link in any browser. No special setup needed on Windows.",
       },
       {
         text: "Paste your address in the faucet, click Claim, and wait ~30 seconds for confirmation.",
@@ -89,7 +89,7 @@ with completeInputsByCapacity() but understanding WHY it exists matters.`,
       },
       {
         text: "Send exactly 100 CKB to: ckt1qzda0cr08m85hc8jlnfp3elzk7jkwdf7yw5q4ek (quest address).",
-        windowsNote: "Copy this address exactly no spaces before or after.",
+        windowsNote: "Copy this address exactly. No spaces before or after.",
       },
       {
         text: "Make sure you are connected to testnet (Pudge network).",

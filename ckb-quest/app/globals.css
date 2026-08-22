@@ -65,19 +65,27 @@
   --f-mono: var(--font-jetbrains), "Courier New", monospace;
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* This reset MUST stay inside @layer base. Unlayered CSS outranks every
+   layered rule regardless of specificity, and Tailwind v4 ships its utilities
+   inside @layer utilities. Left unlayered, `* { margin: 0; padding: 0 }`
+   silently beats every p-*, px-*, m-* and mt-* in the app: the pages still
+   render, just with all their spacing quietly gone. This has regressed once
+   before (5acf443). */
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-html {
-  background-color: var(--c-paper);
-  color: var(--c-ink);
-  font-family: var(--f-ui);
-  font-size: 15px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+  html {
+    background-color: var(--c-paper);
+    color: var(--c-ink);
+    font-family: var(--f-ui);
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
 }
 
 ::selection {
