@@ -1,4 +1,4 @@
-# Week 17 - A page with no spacing, a waitlist with no database, and a number worth quoting
+# Week 17 - The landing page had no spacing, and nothing looked broken enough to notice
 
 **Name:** David Uhumagho
 **Week Ending:** 2026-08-15
@@ -8,37 +8,27 @@
 
 ## Current Progress
 
-- Found the landing page rendering with none of its spacing. Every section sat flush against the left edge with no rhythm between them, and the cause was one rule. The global reset in `globals.css` sat outside any cascade layer, and unlayered CSS outranks layered CSS regardless of specificity. Tailwind v4 ships its utilities inside `@layer utilities`, so a bare `* { margin: 0; padding: 0 }` was quietly beating every `p-*`, `px-*`, `m-*` and `mx-auto` in the app
-- Moved the reset inside `@layer base`, where a reset belongs, and the utilities outrank it again. Verified it by reading the compiled stylesheet rather than trusting how the page looked: brace-matched the minified production CSS to confirm the reset sits inside the `base` block and that `utilities` opens after it. Left a comment naming the failure mode rather than the fix, since this is the second time the same reset has escaped its layer
-- Repaired three sentences that had lost the punctuation carrying them, most likely when em dashes were stripped without a replacement. One was in the first paragraph a new player reads, describing why a cell needs 61 CKBytes to exist
-- Stopped the marketing lattice reading `document.scrollHeight` inside its animation frame, which forces a synchronous layout of the whole document every frame at a cost that grows with page length. It is measured on resize now through a ResizeObserver, so a document that grows as fonts settle is not trusted from first paint, and the loop parks itself once the fill has settled
-- Provisioned Postgres through the Vercel marketplace and connected it to the project, so `DATABASE_URL` is injected across production, preview and development rather than copied by hand. No connection string in the repository and none in my shell history
-- Proved the waitlist end to end against production rather than locally. A signup posted to the live endpoint created a real row, a repeat of the same address updated the stated experience level instead of writing a second row, a malformed address returned 400 and malformed JSON returned 400. Deleted the test rows afterwards so the count starts at zero
-- Metered the endpoint at ten signups per address per hour, and made the count and the increment a single statement. Reading the current number and then writing an incremented one lets two simultaneous requests both read the same value and both decide they are under the limit. Verified against production with twelve requests: ten passed, the eleventh and twelfth returned 429 with the seconds remaining until the window closes
-- Built a way to read the list back: a token-gated export serving CSV or JSON, with the token compared in constant time so it cannot be recovered from response timing, and a 503 rather than an unprotected list if the token is ever missing. Two things in it would have gone wrong quietly. Timestamps were serialising as the server's locale string, which sorts incorrectly in a spreadsheet, so they go out as ISO 8601 UTC. And any value beginning with an equals sign, plus, minus or at sign is quoted, because an address like `=cmd|calc@example.com` passes the email check and would otherwise be a live formula in Excel
-- Removed the last of the silent coercion. An unrecognised experience level was being stored as an empty string with a 200 response, the same shape as the bug from the previous fortnight: the validator rejected the value, fell back to empty, and told nobody. It returns 400 now
-- Carried the mark across the seam between the landing page and the quest. The two surfaces deliberately disagree about ground, display face and radii, but they were disagreeing about everything at once, so clicking through inverted the entire visual world at the moment someone is deciding whether to trust this. The mark now appears in both, with its palette as a parameter rather than a constant, since the same glyph has to sit on near-black and on paper. The index into the palette comes from the same generator call either way, so both show the same shape in the corresponding hue
-- Read every submission in the CKBuilder projects repository before writing my own, and filed the review request as issue 31. Almost everything there is a tool for people who have already arrived: gateways, dashboards, oracles, indexers, vaults. Onboarding appears repeatedly as a sub-feature and nobody appears to be building the on-ramp itself
+- Found that the landing page was rendering with none of its spacing. Every section sat flush against the left edge with no rhythm between them, and the cause was one rule. The global reset in `globals.css` sat outside any cascade layer, and unlayered CSS outranks layered CSS regardless of specificity. Tailwind v4 ships its utilities inside `@layer utilities`, so a bare `* { margin: 0; padding: 0 }` was quietly beating every `p-*`, `px-*`, `m-*` and `mx-auto` in the app
+- Moved the reset inside `@layer base`, which is where a reset belongs, and the utilities outrank it again. The emitted cascade order is `@layer theme, base, components, utilities`, so `base` loses to `utilities` no matter where either appears in the file
+- Verified the fix by reading the compiled stylesheet rather than trusting how the page looked. Brace-matched the minified production CSS to confirm the reset sits inside the `base` block and that `utilities` opens after it. The rendered page and the cascade are two different claims and only one of them can be checked mechanically
+- Left a comment naming the failure mode rather than the fix. This is the second time the same reset has escaped its layer, and the symptom both times was a page that still had its colours, its type and its content, and so never looked broken enough to chase
+- Repaired three sentences that had lost the punctuation carrying them, most likely when em dashes were stripped without a replacement. One of them was in the first paragraph a new player reads, describing why a cell needs 61 CKBytes to exist
+- Stopped the marketing lattice reading `document.scrollHeight` inside its animation frame. That forces a synchronous layout of the whole document on every frame, and the cost grows with page length, so restoring the missing padding had quietly made it more expensive. It is measured on resize now through a ResizeObserver, so a document that grows as fonts settle is not trusted from first paint, and the loop parks itself once the fill has settled and nothing is still flashing
 
 ## Key Learnings
 
-- Unlayered CSS beats every layered rule regardless of specificity. This is not a specificity problem, so none of the usual instincts apply: adding `!important` or a more specific selector to the utilities would have done nothing. The only fix is to put the reset in a layer that loses
-- The failure mode of that bug is that nothing fails. Colours, fonts, content and layout structure all survive, so the page looks like a design decision rather than a defect. That is why it got through once before and why it got through again. A fix I can only confirm by looking is a fix I have not confirmed
-- A public write endpoint whose output is a number you intend to quote is a different problem from one whose output is just data. The rate limit is not protecting the database, it is protecting the credibility of the figure
-- Checking a limit and then applying it are one operation or they are a race. Splitting them across two statements looks correct in every single-request test and fails exactly under the load that makes limiting matter
-- Building the export surfaced what I cannot currently measure. Checkpoint progress lives in the player's own browser, and the only server-side trace of a completion is the reward payout leaving the house wallet, which is not tied to any signup. So a completion rate is a number I have no honest way to produce yet, and I found that out by trying to produce it
-- Naming a gap before a reviewer finds it is worth more than hiding it. The healthiest thread in the projects repository belongs to a builder who was criticised in detail, came back, and answered every point with what he had changed. So the Fiber node problem went into my issue as a question to the person most able to answer it rather than something to quietly work around
-- Two visual identities can share an application, but they need at least one thing in common at the point where a person crosses between them, or the crossing reads as leaving
+- Unlayered CSS beats every layered rule regardless of specificity. This is the whole bug, and it is not a specificity problem, so none of the usual instincts apply. Adding `!important` or a more specific selector to the utilities would have done nothing. The only fix is to put the reset in a layer that loses
+- The failure mode of this bug is that nothing fails. Colours, fonts, content and layout structure all survive, so the page looks like a design decision rather than a defect. That is why it got through once before and why it got through again
+- A fix I can only confirm by looking at the page is a fix I have not confirmed. Reading the compiled output and checking where the rule landed in the cascade is a different kind of evidence, and it is the kind that survives being wrong about what the page is supposed to look like
+- Performance work that grows with content is invisible until the content grows. The per-frame reflow had been there all along and only mattered once the page got tall enough, which happened as a side effect of fixing the spacing
 
 ## Pending
 
-- Completion tracking has no database behind it. Progress is browser-local and disappears with the browser, so I cannot say how far anyone gets or where they stop. This is the next real piece of work, and it is what turns the outreach push into evidence rather than a signup count
-- No email provider is wired up. The form promises one message when the group run starts and there is currently no mechanism to send it
-- Screenshots for issue 31 still need attaching. Images upload through the web interface rather than the command line, so this is a manual step
-- Checkpoints 4 and 5 still need a live Fiber node. This is the question I put to the reviewers rather than the thing I solved
+- Nobody has looked at the landing page since the fix. The cascade is verified, the appearance is not
+- The waitlist behind the landing page still has no database. The route returns 500 and nobody can join
 
 ---
 
 ## The week in one line
 
-One rule in the wrong layer had been silently deleting every margin in the app, and once the page was worth showing, the waitlist behind it became a number I would be willing to defend.
+One rule in the wrong layer had been silently deleting every margin and padding in the app, and the page looked intentional enough that it took a second pass to see it.
