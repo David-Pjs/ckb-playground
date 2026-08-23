@@ -13,6 +13,7 @@ import {
   alreadyRewarded,
 } from "@/lib/ckb";
 import { CHECKPOINTS } from "@/lib/checkpoints";
+import { record } from "@/lib/progress";
 
 // Fast in-deploy cache so repeated verifies of the same checkpoint don't re-scan the chain.
 // It is only a cache: the authoritative "already paid?" check is alreadyRewarded(), which
@@ -76,6 +77,10 @@ export async function POST(req: NextRequest) {
   }
 
   if (!result.ok) {
+    // A failed attempt is the more interesting half of the funnel: it is the
+    // difference between a checkpoint nobody reaches and one everybody gets
+    // stuck on.
+    await record(address, checkpointId, false, null);
     return NextResponse.json({ ok: false, error: result.error, balance: result.balance });
   }
 
@@ -98,6 +103,8 @@ export async function POST(req: NextRequest) {
       console.error("Reward send failed:", e);
     }
   }
+
+  await record(address, checkpointId, true, rewardTxHash);
 
   return NextResponse.json({ ok: true, rewardTxHash, reward: checkpoint.reward });
 }

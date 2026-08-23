@@ -1,9 +1,10 @@
 import { timingSafeEqual } from "node:crypto";
 
 import { db } from "@/lib/db";
+import { funnel, playerCount } from "@/lib/progress";
 
 export const runtime = "nodejs";
-// Always read the table live. A cached signup count is a wrong signup count.
+// Always read the tables live. A cached signup count is a wrong signup count.
 export const dynamic = "force-dynamic";
 
 // Compare in constant time so the token cannot be recovered a character at a
@@ -32,6 +33,17 @@ function csvCell(value: unknown): string {
   return `"${guarded.replace(/"/g, '""')}"`;
 }
 
+function csv(header: string, rows: unknown[][], filename: string): Response {
+  const body = rows.map((r) => r.map(csvCell).join(",")).join("\n");
+  return new Response(`${header}\n${body}\n`, {
+    headers: {
+      "Content-Type": "text/csv; charset=utf-8",
+      "Content-Disposition": `attachment; filename="${filename}"`,
+      "Cache-Control": "no-store",
+    },
+  });
+}
+
 export async function GET(req: Request) {
   const expected = process.env.WAITLIST_ADMIN_TOKEN;
   if (!expected) {
@@ -44,37 +56,46 @@ export async function GET(req: Request) {
   const given = bearer || url.searchParams.get("token") || "";
   if (!given || !tokenMatches(given, expected)) return unauthorized();
 
+  const wantsJson = url.searchParams.get("format") === "json";
+
   try {
     const sql = db();
+
+    // ?view=funnel answers the question the signup count cannot: of the people
+    // who started, how far did they get, and which checkpoint is losing them.
+    if (url.searchParams.get("view") === "funnel") {
+      const [rows, players] = await Promise.all([funnel(sql), playerCount(sql)]);
+      if (wantsJson) {
+        return Response.json(
+          { players, checkpoints: rows },
+          { headers: { "Cache-Control": "no-store" } },
+        );
+      }
+      return csv(
+        "checkpoint_id,reached,completed,total_attempts",
+        rows.map((r) => [r.checkpoint_id, r.reached, r.completed, r.total_attempts]),
+        "ckb-quest-funnel.csv",
+      );
+    }
+
     const rows = await sql`
       SELECT id, email, level, source, referrer, created_at
       FROM waitlist
       ORDER BY id
     `;
 
-    if (url.searchParams.get("format") === "json") {
+    if (wantsJson) {
       return Response.json(
         { count: rows.length, rows },
         { headers: { "Cache-Control": "no-store" } },
       );
     }
 
-    const header = "id,email,level,source,referrer,created_at";
-    const body = rows
-      .map((r) =>
-        [r.id, r.email, r.level, r.source, r.referrer, r.created_at]
-          .map(csvCell)
-          .join(","),
-      )
-      .join("\n");
-
-    return new Response(`${header}\n${body}\n`, {
-      headers: {
-        "Content-Type": "text/csv; charset=utf-8",
-        "Content-Disposition": 'attachment; filename="ckb-quest-waitlist.csv"',
-        "Cache-Control": "no-store",
-      },
-    });
+    return csv(
+      "id,email,level,source,referrer,created_at",
+      rows.map((r) => [r.id, r.email, r.level, r.source, r.referrer, r.created_at]),
+      "ckb-quest-waitlist.csv",
+    );
   } catch (err) {
     console.error("[waitlist/export] read failed", err);
     return Response.json({ error: "Couldn't read the list." }, { status: 500 });
