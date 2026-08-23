@@ -15,8 +15,7 @@ Every week gets a report: what shipped, key learnings, what is pending.
 - [Week 5 - CKB Quest Phase 2: DAO, Spore, RGB++](./weekly-reports/week-05.md)
 - [Week 6 - CKB Quest Phase 3: The Quester, an on-chain identity](./weekly-reports/week-06.md)
 - [Week 7 - Documents you can prove on CKB: shipping ckb-verification](./weekly-reports/week-07.md)
-- [Week 17 - The landing page had no spacing, and nothing looked broken enough to notice](./weekly-reports/week-17.md)
-- [Week 18 - The waitlist gets a database, and a number worth quoting](./weekly-reports/week-18.md)
+- [Week 17 - A page with no spacing, a waitlist with no database, and a number worth quoting](./weekly-reports/week-17.md)
 
 ---
 
