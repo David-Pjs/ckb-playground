@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, Fragment } from "react";
 import { useCcc } from "@ckb-ccc/connector-react";
 import { ccc } from "@ckb-ccc/core";
 import { createSpore } from "@ckb-ccc/spore";
-import { CHECKPOINTS, REQUIRED_CHECKPOINTS, type Checkpoint } from "@/lib/checkpoints";
+import { CHECKPOINTS, REQUIRED_CHECKPOINTS, hex, type Checkpoint } from "@/lib/checkpoints";
 import { avatarSvg } from "@/lib/avatar";
 import Mark from "@/components/Mark";
 import { Avatar } from "../Avatar";
@@ -432,7 +432,7 @@ function CheckpointCard({
   const isComplete = state.status === "complete";
   const isActive = state.status === "active";
 
-  const hexId = `0x0${checkpoint.id}`;
+  const hexId = hex(checkpoint.id);
 
   if (isLocked) {
     return (

@@ -8,7 +8,7 @@ import { avatarSpec, DARK_GROUND_PALETTE } from "@/lib/avatar";
 const SEEDS = [
   "proof of work done", // green
   "find the bitcoin ghost", // ink
-  "nine checkpoints", // amber
+  "no shortcuts", // amber
   "spore", // red
 ];
 
