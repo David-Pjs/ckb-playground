@@ -1,4 +1,4 @@
-﻿export interface Step {
+export interface Step {
   text: string;
   windowsNote?: string;
   link?: { label: string; url: string };
@@ -21,7 +21,23 @@ export interface Checkpoint {
   // are optional because they depend on a live Fiber node the quest server does not run
   // yet; marking them optional keeps the rest of the quest reachable in the meantime.
   optional?: boolean;
+  // Surfaces the connected wallet's full CKB address inside the checkpoint itself.
+  // The header shows it truncated, which a reviewer with CKB experience still missed
+  // for several minutes; a beginner coming from an EVM wallet never finds it at all,
+  // and checkpoint 1 cannot be completed without it.
+  showsAddress?: boolean;
+  // Builds and signs the transfer in the app instead of sending the player to an
+  // external code editor. The lesson is the change output, not the SDK.
+  inAppSend?: boolean;
 }
+
+// The quest's own address, and the single source of truth for it. lib/ckb.ts verifies
+// against this value and the in-app send builds its output to it, so the two can never
+// drift apart.
+export const QUEST_ADDRESS = "ckt1qzda0cr08m85hc8jlnfp3elzk7jkwdf7yw5q4ek";
+
+// Checkpoint 2 sends exactly this much to the quest address.
+export const TRANSFER_CKB = 100;
 
 export const CHECKPOINTS: Checkpoint[] = [
   {
@@ -45,7 +61,7 @@ persists forever. On CKB, your cells occupy space, and that space is priced in C
         text: 'Click "Connect Wallet" above. Use JoyID (passkey, no seed phrase) or MetaMask.',
       },
       {
-        text: "Copy your CKB address (starts with ckt1 for testnet).",
+        text: "Copy your CKB testnet address using the copy button below. It starts with ckt1. If your wallet also shows an address starting with 0x, that is not the one the faucet needs.",
       },
       {
         text: "Go to the testnet faucet and claim CKB.",
@@ -56,9 +72,10 @@ persists forever. On CKB, your cells occupy space, and that space is priced in C
         text: "Paste your address in the faucet, click Claim, and wait ~30 seconds for confirmation.",
       },
       {
-        text: "Paste your address below and click Verify. The system will check your balance on testnet.",
+        text: "Come back here and click Verify. Your address is already filled in below.",
       },
     ],
+    showsAddress: true,
     inputLabel: "Your CKB address",
     inputPlaceholder: "ckt1qzda0cr08m85hc8jlnfp3....",
     inputType: "address",
@@ -81,27 +98,26 @@ If you have a Cell with 200 CKB and want to send 100 CKB to Bob, you must:
 If you forget the change cell, that CKB is gone. It becomes the transaction fee.
 Most beginners lose CKB this way at least once. The CCC SDK handles this automatically
 with completeInputsByCapacity() but understanding WHY it exists matters.`,
-    task: "Send exactly 100 CKB to the quest address below. Your transaction must have a change output back to your address.",
+    task: "Send exactly 100 CKB to the quest address. Your transaction must have a change output back to your address.",
     steps: [
       {
-        text: "Use the CKB Airdrop app or CCC Playground to send CKB.",
+        text: "Read the breakdown below. It shows the cells your transaction will destroy and create, including the change cell coming back to you.",
+      },
+      {
+        text: "Click Build and Sign. The app assembles the transaction and your wallet asks you to approve it. You are signing, not writing code.",
+      },
+      {
+        text: "Approve in your wallet. The transaction hash appears here automatically once it is broadcast.",
+      },
+      {
+        text: "Click Verify. The chain is checked for two things: 100 CKB reached the quest address, and a change output came back to you.",
+      },
+      {
+        text: "Optional. If you want to build the same transaction by hand, CCC Playground is a code editor for exactly that. Skip it if you are new; it is not required to pass this checkpoint.",
         link: { label: "CCC Playground", url: "https://live.ckbccc.com" },
       },
-      {
-        text: "Send exactly 100 CKB to: ckt1qzda0cr08m85hc8jlnfp3elzk7jkwdf7yw5q4ek (quest address).",
-        windowsNote: "Copy this address exactly. No spaces before or after.",
-      },
-      {
-        text: "Make sure you are connected to testnet (Pudge network).",
-      },
-      {
-        text: "After the transaction confirms, copy the transaction hash from the explorer.",
-        link: { label: "CKB Testnet Explorer", url: "https://pudge.explorer.nervos.org" },
-      },
-      {
-        text: "Paste the transaction hash below. The system will verify: correct amount sent, change output exists.",
-      },
     ],
+    inAppSend: true,
     inputLabel: "Transaction hash",
     inputPlaceholder: "0x3b4f2d...",
     inputType: "txHash",

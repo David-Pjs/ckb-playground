@@ -9,6 +9,8 @@ import { avatarSvg } from "@/lib/avatar";
 import Mark from "@/components/Mark";
 import { Avatar } from "../Avatar";
 import { QuesterCard } from "../QuesterCard";
+import { AddressPanel } from "../AddressPanel";
+import { SendModule } from "../SendModule";
 
 const QUESTER_KEY = "ckb-quest-quester-spore";
 
@@ -335,6 +337,7 @@ export default function QuestPage() {
                 state={state}
                 verifyState={vs}
                 address={address}
+                signer={signer}
                 onVerify={handleVerify}
                 onConnect={() => open()}
                 onMint={handleMintQuester}
@@ -394,6 +397,7 @@ function CheckpointCard({
   state,
   verifyState,
   address,
+  signer,
   onVerify,
   onConnect,
   onMint,
@@ -406,6 +410,7 @@ function CheckpointCard({
   state: CheckpointState;
   verifyState?: VerifyState;
   address: string | null;
+  signer: ccc.Signer | undefined;
   onVerify: (cp: Checkpoint, input: string) => void;
   onConnect: () => void;
   onMint: (cp: Checkpoint) => void;
@@ -415,6 +420,14 @@ function CheckpointCard({
   fiberEnabled: boolean;
 }) {
   const [input, setInput] = useState("");
+
+  // Checkpoint 1 asks for the address the app already knows. Making the player dig it out
+  // of the header and paste it back was friction on the very first task, and the header
+  // copy is where people got stuck.
+  useEffect(() => {
+    if (checkpoint.showsAddress && address) setInput(address);
+  }, [checkpoint.showsAddress, address]);
+
   const isLocked = state.status === "locked";
   const isComplete = state.status === "complete";
   const isActive = state.status === "active";
@@ -631,6 +644,12 @@ function CheckpointCard({
           ))}
         </ol>
       </div>
+
+      {/* Checkpoint-specific action modules */}
+      {address && checkpoint.showsAddress && <AddressPanel address={address} />}
+      {address && signer && checkpoint.inAppSend && (
+        <SendModule signer={signer} onSent={setInput} />
+      )}
 
       {/* Input + verify */}
       <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: "28px" }}>

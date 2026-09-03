@@ -1,10 +1,10 @@
-﻿import { ccc } from "@ckb-ccc/core";
+import { ccc } from "@ckb-ccc/core";
 import { findSpore } from "@ckb-ccc/spore";
 import { avatarSvg } from "./avatar";
+import { QUEST_ADDRESS } from "./checkpoints";
 
 const TESTNET_RPC = process.env.CKB_TESTNET_RPC ?? "https://testnet.ckb.dev/rpc";
 const SHANNONS_PER_CKB = BigInt(100_000_000);
-const QUEST_ADDRESS = "ckt1qzda0cr08m85hc8jlnfp3elzk7jkwdf7yw5q4ek";
 
 function getClient() {
   return new ccc.ClientPublicTestnet({ url: TESTNET_RPC });
