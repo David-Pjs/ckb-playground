@@ -39,6 +39,12 @@ export const QUEST_ADDRESS = "ckt1qzda0cr08m85hc8jlnfp3elzk7jkwdf7yw5q4ek";
 // Checkpoint 2 sends exactly this much to the quest address.
 export const TRANSFER_CKB = 100;
 
+// Ids 4 and 5 are absent on purpose. They were the two Fiber checkpoints, cut from v1
+// after a reviewer who knows CKB well pointed out that asking a beginner to run a payment
+// channel node is a wall, not a checkpoint. The ids of the survivors are deliberately not
+// renumbered: id is the persisted key behind progress rows, the reward de-duplication in
+// alreadyRewarded, and the verification switch, so shifting them would silently rewrite
+// what every historical record means. Display position comes from array order instead.
 export const CHECKPOINTS: Checkpoint[] = [
   {
     id: 1,
@@ -166,110 +172,6 @@ Airdropping 100 tokens to 10 people = ~1,620 CKB minimum just in capacity costs.
     inputPlaceholder: "0x55e7086c...",
     inputType: "typeScriptHash",
     verifyHint: "Must be a valid xUDT type script hash on testnet with at least 1,000 units issued",
-  },
-  {
-    id: 4,
-    slug: "fiber-first-contact",
-    title: "Fiber First Contact",
-    subtitle: "Run a node. Open a channel. Touch the Lightning.",
-    reward: 200,
-    optional: true,
-    concept: `Fiber is CKB's payment channel network like Bitcoin's Lightning Network
-but supporting multiple assets (CKB, RGB++ tokens, stablecoins) and using PTLCs
-instead of HTLCs for better security.
-
-Here's what payment channels actually are:
-  1. You lock CKB into a channel contract on-chain (funding transaction)
-  2. You and your counterparty exchange signed off-chain state updates instant, no fees
-  3. When you're done, one final on-chain transaction settles the final balance
-
-1,000 payments between two parties = 2 on-chain transactions (open + close).
-This is how Fiber can do micropayments at 0.0001 CKB each.
-
-The catch: you need a running Fiber node with a funded wallet and at least one open
-channel before any payments work. This is exactly the infrastructure gap that stops
-most developers. This checkpoint walks you through it.`,
-    task: "Run a Fiber node on testnet, fund it, open a channel, and paste the channel ID.",
-    steps: [
-      {
-        text: "Download the Fiber node binary for your platform.",
-        link: { label: "Fiber Releases", url: "https://github.com/nervosnetwork/fiber/releases" },
-        windowsNote: "Download the Windows binary (fiber-x86_64-pc-windows-msvc.zip). Extract to a folder like C:\\fiber-node\\",
-      },
-      {
-        text: "Create a config file (fiber.toml). The Fiber docs have a testnet template.",
-        link: { label: "Run a Fiber Node", url: "https://www.fiber.world/docs/quick-start/run-a-node" },
-        windowsNote: "In PowerShell: New-Item -Path C:\\fiber-node\\fiber.toml -ItemType File",
-      },
-      {
-        text: "Start the node: ./fiber run --config fiber.toml",
-        windowsNote: "In PowerShell from C:\\fiber-node\\: .\\fiber.exe run --config fiber.toml",
-      },
-      {
-        text: "Get your node's CKB address and fund it from the testnet faucet (need ~300 CKB to open a channel).",
-        link: { label: "faucet.nervos.org", url: "https://faucet.nervos.org" },
-      },
-      {
-        text: "Connect to a testnet peer and open a channel with at least 100 CKB.",
-        link: { label: "Fiber Testnet Nodes", url: "https://www.fiber.world/docs/getting-started/testnet-nodes" },
-        windowsNote: "Use the Fiber RPC: curl -X POST http://127.0.0.1:8227 with the open_channel method.",
-      },
-      {
-        text: "Copy your channel ID from the open_channel response and paste it below.",
-      },
-    ],
-    inputLabel: "Fiber channel ID",
-    inputPlaceholder: "0x2cf3a8...",
-    inputType: "channelId",
-    verifyHint: "Must be a valid open channel on Fiber testnet with at least 100 CKB capacity",
-  },
-  {
-    id: 5,
-    slug: "pay-for-something",
-    title: "Pay for Something Real",
-    subtitle: "Use your channel to pay the Fiber-402 API",
-    reward: 300,
-    optional: true,
-    concept: `HTTP 402 Payment Required is a status code from 1996 that was reserved
-for future use specifically, for micropayment systems. Fiber makes it finally practical.
-
-The flow:
-  1. Your client requests a resource (GET /api/data)
-  2. Server responds 402 with a Fiber invoice
-  3. Your client pays the invoice over Fiber (instant, ~0.001 CKB)
-  4. Client replays the request with a payment proof header
-  5. Server verifies payment and returns the data
-
-This is pay-per-call API monetization with no subscriptions, no credit cards,
-no accounts just a wallet and an open Fiber channel. The implications for AI
-agent infrastructure are significant: agents can autonomously pay for data, compute,
-and services without human authorization for each transaction.
-
-You're about to make one of those payments for real.`,
-    task: "Use your Fiber channel to pay the CKB Quest API endpoint and paste the payment hash.",
-    steps: [
-      {
-        text: "Make sure your Fiber channel from Checkpoint 4 is still open.",
-      },
-      {
-        text: "Call the quest payment endpoint to get a Fiber invoice.",
-        link: { label: "Quest Payment Endpoint", url: "/api/quest-invoice" },
-      },
-      {
-        text: "Pay the invoice using your Fiber node's RPC:",
-        windowsNote: "In PowerShell: Invoke-WebRequest -Uri http://127.0.0.1:8227 -Method POST -Body '{...send_payment...}'",
-      },
-      {
-        text: "Copy the payment hash from the send_payment response.",
-      },
-      {
-        text: "Paste the payment hash below. The system will verify it on the Fiber network.",
-      },
-    ],
-    inputLabel: "Fiber payment hash",
-    inputPlaceholder: "0x9f1c44...",
-    inputType: "paymentHash",
-    verifyHint: "Must be a valid settled payment on Fiber testnet to the quest node",
   },
   {
     id: 6,
@@ -461,6 +363,11 @@ export const TOTAL_REWARD = CHECKPOINTS.reduce((sum, c) => sum + c.reward, 0);
 // counts the same array the quest runs on, so the two cannot disagree.
 
 export const hex = (n: number) => `0x${n.toString(16).padStart(2, "0")}`;
+
+// The number a player sees. Deliberately not the id: ids are stable storage keys and carry
+// gaps where cut checkpoints used to sit, so labelling cards with them would show 0x06 on
+// the card counting 4 of 7.
+export const positionOf = (id: number) => CHECKPOINTS.findIndex((c) => c.id === id) + 1;
 
 export const COUNT = CHECKPOINTS.length;
 

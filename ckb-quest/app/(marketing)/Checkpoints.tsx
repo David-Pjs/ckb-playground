@@ -8,14 +8,12 @@ const STEP = 13; // how far each card peeks out below the one above it
 const TOP = 88; // where the stack pins
 
 function Card({
-  id,
   title,
   subtitle,
   reward,
   index,
   total,
 }: {
-  id: number;
   title: string;
   subtitle: string;
   reward: number;
@@ -56,7 +54,7 @@ function Card({
 
         <div className="relative flex items-start justify-between gap-6">
           <span className="font-mono text-[11px] text-faint transition-colors duration-300 group-hover:text-accent">
-            {hex(id)}
+            {hex(index + 1)}
           </span>
           <span className="font-mono text-[11px] text-faint">
             {index + 1}/{total}
